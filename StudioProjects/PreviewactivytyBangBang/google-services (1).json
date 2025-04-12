@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "489334723881",
+    "project_id": "ace-momentum-234113",
+    "storage_bucket": "ace-momentum-234113.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489334723881:android:e28c5f4c74954b2c3b1338",
+        "android_client_info": {
+          "package_name": "com.example.previewactivytybangbang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOM-f3r8oSjwrmqttq0Fk9BU9Wk8H3xjA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

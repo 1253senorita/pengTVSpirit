@@ -1,0 +1,12 @@
+specVersion: "v1"
+serviceId: "previewactivytybangbang"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "previewactivytybangbang-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]
