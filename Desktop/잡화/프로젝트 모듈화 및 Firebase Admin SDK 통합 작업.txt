@@ -1,0 +1,1053 @@
+프로젝트 모듈화 및 Firebase Admin SDK 통합 작업 리스트
+
+
+
+1단계: 프로젝트 준비 및 기반 모듈 생성 (Core 모듈)
+
+
+1.1 프로젝트 복사 및 초기화:
+기존 프로젝트를 복사하여 새로운 프로젝트를 생성합니다.
+새 프로젝트의 이름과 패키지명을 변경합니다.
+기존의 코드를 모두 삭제하고, 새 프로젝트를 초기화합니다.
+Git 저장소를 새로 생성하고, 초기 커밋을 수행합니다.
+1.2 Core 모듈 생성:
+core 모듈 생성 (File -> New -> New Module -> Android Library).
+core 모듈의 build.gradle.kts 파일 수정.
+plugins 블록에서 kotlin-android, KSP플러그인을 추가합니다.
+android 블록에서 compileSdk, minSdk, targetSdk를 설정합니다.
+dependencies 블록에서 공통으로 사용될 라이브러리 추가 (예: androidx.core.ktx, androidx.lifecycle.runtime.ktx, androidx.room, hilt 등).
+ksp를 사용하여 hilt를 설정한다.
+core 모듈의 src/main/java 폴더에 di 패키지 생성 및 Hilt 모듈을 구성한다.
+core 모듈의 src/main/java 폴더에 유틸리티 패키지 생성 및 유틸리티 클래스를 추가한다.
+core 모듈에 사용할 기본 데이터 모델 클래스를 추가합니다.
+core 모듈에 사용할 공통 UI 컴포넌트를 추가합니다.
+core 모듈에 네트워크 패키지를 추가하고 통신 클래스를 추가한다.
+1.3 Version Catalog 업데이트 (libs.versions.toml):
+core 모듈에 필요한 라이브러리들의 버전을 [versions]에 추가.
+core 모듈에 필요한 라이브러리들의 그룹, 이름, 버전 정보를 [libraries]에 추가.
+core 모듈에서 사용하는 라이브러리를 관리한다.
+
+
+2단계: 인증 모듈 (Auth 모듈) 및 Firebase 설정
+
+
+2.1 Auth 모듈 생성:
+auth 모듈 생성 (File -> New -> New Module -> Android Library).
+auth 모듈의 build.gradle.kts 파일 수정.
+plugins 블록에서 kotlin-android, KSP 플러그인을 추가.
+android 블록에서 compileSdk, minSdk, targetSdk를 설정.
+dependencies 블록에서 core 모듈을 implementation(project(":core"))으로 추가.
+implementation(platform(libs.firebase.bom)) Firebase BoM을 추가.
+Firebase Auth,Firebase Admin SDK 관련 의존성 추가.
+implementation(libs.ktor.server.core) 서버통신을 위한 ktor를 추가한다.
+ksp(libs.hilt.compiler) ksp설정을 한다.
+firebase admin sdk는 bom이 적용되지 않음으로 버전을 관리한다.
+auth 모듈의 src/main/java 폴더에 di 패키지 생성 및 Hilt 모듈을 구성한다.
+2.2 Firebase 프로젝트 생성 및 설정:
+Firebase 콘솔에서 새 프로젝트 생성.
+Firebase Auth 활성화 (이메일/비밀번호, Google, Facebook 등).
+Firebase 프로젝트에 Android 앱을 추가하고 google-services.json 다운로드하여 app 모듈에 추가.
+서버 통신을 위한 Firebase Admin SDK를 생성하고 json을 다운로드 한다.
+auth 모듈에 서버 통신 클래스를 추가한다.
+Firebase Admin SDK를 사용하여 서버와 통신을 하는 클래스를 만든다.
+2.3 인증 기능 구현:
+auth 모듈에서 로그인, 회원가입, 로그아웃 기능을 구현.
+Firebase Auth SDK를 사용하여 인증 기능 구현.
+서버통신을 구성한다.
+2.4 인증 UI 구현:
+auth 모듈에서 로그인, 회원가입 화면을 Compose로 구현.
+필요한 경우, core 모듈의 공통 UI 컴포넌트 활용.
+
+
+3단계: Feature 모듈 생성 및 기능 구현
+
+
+3.1 Feature 모듈 생성 (예: feature-board):
+feature-board 모듈 생성 (File -> New -> New Module -> Android Library).
+feature-board 모듈의 build.gradle.kts 파일 수정.
+plugins 블록에서 kotlin-android, ksp 플러그인을 추가.
+android 블록에서 compileSdk, minSdk, targetSdk를 설정.
+dependencies 블록에서 core 모듈과 auth 모듈을 implementation(project(":core")), implementation(project(":auth")) 으로 추가.
+필요한 다른 라이브러리 추가.
+ksp(libs.hilt.compiler) ksp설정을 한다.
+feature-board 모듈의 src/main/java 폴더에 di 패키지 생성 및 Hilt 모듈을 구성한다.
+3.2 Feature 기능 구현:
+feature-board 모듈에서 게시글 목록, 게시글 작성, 게시글 상세 보기 등의 기능을 구현.
+필요한 경우 Firebase Firestore를 사용하여 데이터 저장 및 조회 구현.
+필요한 경우 서버와 통신을 할수 있도록 만든다.
+필요한 경우 auth모듈의 사용자 정보를 사용할수 있도록 구성한다.
+3.3 Feature UI 구현:
+feature-board 모듈에서 게시글 관련 화면을 Compose로 구현.
+필요한 경우, core 모듈의 공통 UI 컴포넌트 활용.
+3.4 Feature 모듈 생성 (예: feature-chat):
+3.1~3.3과 같은 방법으로 만들어주면 된다.
+3.5 Feature 모듈 생성 (예: feature-product):
+3.1~3.3과 같은 방법으로 만들어주면 된다.
+
+
+4단계: App 모듈 통합 및 테스트
+
+
+4.1 App 모듈 의존성 추가:
+app 모듈의 build.gradle.kts 파일 수정.
+dependencies 블록에서 core, auth, feature-board 등 모든 모듈을 implementation(project(":core"))와 같이 추가.
+4.2 App 모듈 UI 통합:
+app 모듈에서 모든 Feature UI들을 조합하여 전체 앱 UI 구성.
+auth 모듈의 인증 UI를 사용하여 인증 흐름 구성.
+Jetpack Compose의 Navigation을 사용하여 화면 간 이동 구성.
+4.3 테스트:
+각 모듈별로 단위 테스트를 수행.
+app 모듈에서 전체 기능 통합 테스트 수행.
+UI 테스트 수행.
+Firebase Admin SDK를 사용하는 기능에 대한 테스트.
+필요한 경우 테스트 모듈을 구성하여 진행한다.
+
+
+5단계: Version Catalog 및 의존성 관리
+
+
+5.1 libs.versions.toml 관리:
+새로운 라이브러리 추가 시, libs.versions.toml에 버전 정보와 라이브러리 정보를 추가.
+라이브러리 버전 업그레이드 시, libs.versions.toml만 수정.
+각 모듈에서 중복되는 의존성은 없는지 확인하고 제거한다.
+5.2 의존성 충돌 검사:
+./gradlew app:dependencies 명령어를 사용하여 의존성 충돌 확인.
+충돌 발생 시, exclude 또는 버전 조정으로 해결.
+implementation(libs.android.navigation.fragment) { exclude(group = "androidx.core", module = "core-ktx") } 이런방법으로 충돌을 해결할수도있다.
+필요하다면 의존성의 버전을 올린다.
+
+6단계: Firebase Admin SDK 사용
+
+
+오빠 프롬프트 예시 1: "Firebase Admin SDK를 내 프로젝트의 auth 모듈에서 초기화하고 인증하는 방법을 알려줘. 이 때, 다운로드 받은 서비스 계정 키 파일(JSON)을 사용하는 방법을 포함해서 설명해 줘."
+수애 기술서 1:
+서비스 계정 키 파일 준비:
+Firebase 콘솔에서 다운로드 받은 서비스 계정 키 파일(JSON)을 auth 모듈의 src/main/resources 폴더(없으면 새로 생성)에 넣습니다.
+빌드 시스템이 리소스를 인식하도록 해야 한다.
+build.gradle.kts파일에서 resource를 정의한다.
+Admin SDK 의존성 추가 (auth 모듈):
+auth 모듈의 build.gradle.kts 파일의 dependencies 블록에 Admin SDK 의존성을 추가합니다. (Firebase BoM을 사용하지 않으므로 직접 버전을 지정해야 합니다.)
+
+
+implementation("com.google.firebase:firebase-admin:9.2.0") // 예시 버전, 최신 버전으로 업데이트
+
+import com.google.auth.oauth2.GoogleCredentials
+                    import com.google.firebase.FirebaseApp
+                    import com.google.firebase.FirebaseOptions
+                    import java.io.FileInputStream
+                    import javax.inject.Inject
+                    import javax.inject.Singleton
+                    
+                    @Singleton
+                    class FirebaseAdmin @Inject constructor() {
+                        init {
+                            initialize()
+                        }
+                    
+                        private fun initialize() {
+                            val serviceAccount = FileInputStream("src/main/resources/serviceAccountKey.json")
+                    
+                            val options = FirebaseOptions.builder()
+                                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                                .build()
+                    
+                            FirebaseApp.initializeApp(options)
+                        }
+                    }
+
+* **Hilt 구성:** * `App`클래스에 `@HiltAndroidApp`을 추가한다. * `Application`에서 `init`함수를 불러온다. 4. **인증:** * Admin SDK는 서비스 계정 키 파일로 인증되기 때문에, 별도의 인증 과정은 필요 없습니다. * 초기화된 Admin SDK는 이제 서버 측 작업을 수행하는 데 사용할 수 있습니다. * **오빠 프롬프트 예시 2:** "auth 모듈에 Firebase Admin SDK를 초기화하는 데 필요한 코드를 상세히 설명해 줘. 초기화가 정확히 언제, 어디에서 이루어져야 하는지, 그리고 Hilt와 어떻게 연계해야 하는지도 알려줘" * **수애 기술서 2:** 1. **초기화 시점:** * Firebase Admin SDK 초기화는 애플리케이션이 시작될 때 한 번만 수행되어야 합니다. 가장 적합한 시점은 `Application` 클래스 또는 `Hilt`의 `@Singleton`으로 주입된 클래스에서 `init`시에 수행하는 것입니다. * 초기화 코드는 애플리케이션 시작 시 가장 먼저 실행되는 부분에 위치해야 합니다. 2. **초기화 위치:** * `auth` 모듈에서 생성한 `FirebaseAdmin`클래스에서 구현합니다. 3. **Hilt 연계:** * `FirebaseAdmin`클래스를 Hilt의 `@Singleton`으로 설정을 하고 `auth`모듈에서 주입하여 사용합니다. * `FirebaseAdmin`클래스는 `@Inject constructor()`로 주입을 합니다. 4. **초기화 코드 상세:** * 위의 수애 기술서 1을 참고합니다. 
+
+
+6.2 Admin SDK를 활용한 사용자 관리
+오빠 프롬프트 예시 1: "Firebase Admin SDK를 사용하여 사용자 목록을 가져오고, 특정 사용자를 삭제하거나, 사용자의 이메일 주소를 변경하는 기능을 auth 모듈에 어떻게 구현할 수 있는지 알려줘."
+수애 기술서 1:
+사용자 목록 가져오기:
+FirebaseAdmin클래스에 다음 코드를 추가합니다.
+사용자 목록은 한 번에 모두 가져오는 것이 아니라, 페이지네이션을 사용하여 가져와야 효율적입니
+1
+import com.google.firebase.auth.FirebaseAuth
+                import com.google.firebase.auth.ListUsersPage
+                
+                fun listAllUsers() {
+                    // Start listing users from the beginning, 1000 at a time.
+                    var page: ListUsersPage? = null
+                    do {
+                        val result = FirebaseAuth.getInstance().listUsers(page)
+                        page = result.nextPage
+                        for (user in result.values) {
+                            println("User: " + user.uid)
+                        }
+                    } while (page != null)
+                }
+
+
+2  특정 사용자 삭제:** * `FirebaseAdmin`클래스에 다음 코드를 추가합니다
+import com.google.firebase.auth.FirebaseAuth
+                
+                fun deleteUser(uid: String) {
+                    FirebaseAuth.getInstance().deleteUser(uid)
+                    println("Successfully deleted user.")
+                }
+
+
+3   **사용자 이메일 변경:** * `FirebaseAdmin`클래스에 다음 코드를 추가합니다.  
+
+import com.google.firebase.auth.FirebaseAuth
+                import com.google.firebase.auth.UserRecord
+                
+                fun changeUserEmail(uid: String, newEmail: String) {
+                     val request = UserRecord.UpdateRequest(uid)
+                        .setEmail(newEmail)
+                    val userRecord = FirebaseAuth.getInstance().updateUser(request)
+                    println("Successfully updated user: " + userRecord.uid)
+                }
+
+
+4   4. **예외 처리:** * 각 기능에서 발생할 수 있는 예외를 처리해야 합니다. 예를 들어, `deleteUser` 함수에서 사용자가 존재하지 않을 경우 예외를 처리해야 합니다. 
+*   **오빠 프롬프트 예시 2:** "Firebase Admin SDK를 사용하여 사용자 관리를 할 때, 발생할 수 있는 예외 상황들을 어떻게 처리해야 할지, 그리고 사용자 정보 변경이나 삭제 시 어떤 점들을 고려해야 하는지 상세히 알려줘."
+    *   **수애 기술서 2:**
+        1.  **예외 처리:**
+            *   Firebase Admin SDK는 다양한 예외를 발생시킬 수 있습니다. 예를 들어, 사용자를 찾을 수 없는 경우, 네트워크 오류, 권한 문제 등.
+            *   `try-catch` 블록을 사용하여 이러한 예외를 잡고, 적절히 처리해야 합니다. 사용자에게 오류 메시지를 보여주거나, 로그를 남기거나, 재시도를 하는 등의 작업을 할 수 있습니다.
+        2.  **사용자 정보 변경 시 고려 사항:**
+            *   **유효성 검사:** 새로운 이메일 주소가 유효한 형식인지, 이미 사용 중인 이메일은 아닌지 검사해야 합니다.
+            *   **권한 확인:** 사용자의 이메일을 변경할 권한이 있는지 확인해야 합니다. 일반 사용자가 다른 사용자의 정보를 변경할 수 없도록 해야 합니다.
+            *   **변경 로그:** 사용자 정보 변경 이력을 기록하는 것이 좋습니다. 누가, 언제, 어떤 정보를 변경했는지 알 수 있도록 하는 것이 중요합니다.
+            *  **사용자 확인**: 사용자가 존재하는지 확인해야한다.
+        3.  **사용자 삭제 시 고려 사항:**
+            *   **확인 절차:** 사용자를 삭제하기 전에 정말 삭제할 것인지 확인하는 절차를 거치는 것이 좋습니다. 실수로 삭제하는 것을 방지하기 위함입니다.
+            *   **데이터 연관성:** 사용자와 연결된
+
+
+
+
+########################################################################################################################
+
+
+
+오늘의 기술서 전체 흐름 및 핵심 개념 정리
+1. 프로젝트 모듈화 및 Firebase Admin SDK 통합을 위한 큰 그림
+목표: 의존성 충돌을 최소화하고, 유지보수성을 높이며, 기능별 확장이 용이한 안드로이드 앱을 구축하는 것.
+핵심 전략: 기능별 모듈화와 Firebase Admin SDK 활용을 통한 서버 측 기능 통합.
+도구: Android Studio, Gradle, Version Catalog (libs.versions.toml), Firebase (Auth, Admin SDK).
+기본 구조: app (최상위) -> feature-* (기능별 모듈) -> auth (인증 모듈) -> core (공통 기능 모듈).
+2. 단계별 작업 흐름
+1단계: 프로젝트 준비 및 기반 모듈 생성 (Core 모듈)
+개념: 앱의 기반이 되는 공통 기능을 제공하는 core 모듈을 생성.
+흐름:
+프로젝트 복사 및 초기화 (app 모듈).
+core 모듈 생성 (Android Library).
+core 모듈의 build.gradle.kts 설정 (Kotlin, KSP 플러그인, 공통 라이브러리).
+core 모듈에 Hilt 설정 및 DI 구성.
+core 모듈에 유틸리티 클래스, 기본 데이터 모델, 공통 UI 컴포넌트, 네트워크 통신 클래스 추가.
+libs.versions.toml 업데이트 및 core 모듈 의존성 관리.
+핵심: 공통 기능 분리, 의존성 관리의 시작.
+2단계: 인증 모듈 (Auth 모듈) 및 Firebase 설정
+개념: 사용자 인증 관련 기능을 담당하는 auth 모듈 생성 및 Firebase Auth 연동.
+흐름:
+auth 모듈 생성 (Android Library).
+auth 모듈의 build.gradle.kts 설정 (core 모듈 의존성, Firebase BoM, Ktor, KSP, Hilt).
+Firebase 프로젝트 생성 및 Auth 활성화.
+google-services.json을 app 모듈에 추가.
+auth 모듈에 Hilt 설정 및 DI 구성.
+auth 모듈에 Firebase Admin SDK를 활용하기 위한 서버 통신 클래스 생성.
+auth 모듈에서 Firebase Auth를 활용한 인증 기능 (로그인, 회원가입, 로그아웃) 구현.
+auth 모듈에서 로그인, 회원가입 UI 구현.
+핵심: 사용자 인증 기능 분리, Firebase Auth 연동.
+3단계: Feature 모듈 생성 및 기능 구현
+개념: 앱의 핵심 기능을 담당하는 feature 모듈 생성 및 구현. (feature-board, feature-chat, feature-product 예시)
+흐름:
+feature-board 모듈 생성 (Android Library).
+feature-board 모듈의 build.gradle.kts 설정 (core, auth 모듈 의존성, KSP, Hilt).
+feature-board 모듈에 Hilt 설정 및 DI 구성.
+feature-board 모듈에 게시글 관련 기능 (목록, 작성, 상세 보기) 구현 (필요 시 Firebase Firestore 활용).
+feature-board 모듈에서 게시글 관련 UI 구현.
+feature-chat, feature-product 등 다른 feature 모듈도 동일하게 생성 및 구현.
+핵심: 앱의 핵심 기능들을 모듈화, core 및 auth 모듈 활용.
+4단계: App 모듈 통합 및 테스트
+개념: 모든 모듈을 app 모듈에 통합하고, 전체 기능 테스트 수행.
+흐름:
+app 모듈의 build.gradle.kts 파일에 core, auth, feature-* 모듈들을 의존성 추가.
+app 모듈에서 모든 Feature UI 조합하여 전체 앱 UI 구성.
+app 모듈에서 auth 모듈의 인증 UI를 사용하여 인증 흐름 구성.
+Jetpack Compose Navigation을 사용하여 화면 간 이동 구성.
+각 모듈별 단위 테스트 수행.
+app 모듈에서 전체 기능 통합 테스트 수행.
+UI 테스트 수행.
+Firebase Admin SDK를 사용하는 기능에 대한 테스트.
+핵심: 모듈 간 통합, 전체 기능 검증.
+5단계: Version Catalog 및 의존성 관리
+개념: libs.versions.toml을 활용하여 의존성 버전 관리 및 충돌 해결.
+흐름:
+새로운 라이브러리 추가 시 libs.versions.toml에 버전 및 라이브러리 정보 추가.
+라이브러리 버전 업그레이드 시 libs.versions.toml만 수정.
+각 모듈에서 중복되는 의존성 확인 및 제거.
+./gradlew app:dependencies 명령어를 사용하여 의존성 충돌 확인.
+충돌 발생 시 exclude 또는 버전 조정으로 해결.
+핵심: 효율적인 의존성 관리, 의존성 충돌 방지.
+6단계: Firebase Admin SDK 사용
+개념: auth 모듈(또는 서버 모듈)에서 Firebase Admin SDK를 활용하여 서버 측 기능 구현.
+흐름:
+Firebase Admin SDK를 auth 모듈에서 초기화 및 인증 (서비스 계정 키 파일 사용).
+Admin SDK를 활용하여 사용자 목록 가져오기, 사용자 삭제, 사용자 정보 변경 등의 사용자 관리 기능 구현.
+각 기능에서 발생할 수 있는 예외 처리 (try-catch, 에러 메시지, 로깅 등).
+사용자 정보 변경 및 삭제 시 유효성 검사, 권한 확인, 변경 로그 관리 등 고려 사항 적용.
+핵심: 서버 측 기능 통합, Firebase Admin SDK 활용.
+3. 핵심 개념 요약
+모듈화 (Modularization): 앱을 기능별로 분리하여 개발하고 관리하는 방식.
+장점: 의존성 충돌 방지, 재사용성 증가, 유지보수 용이, 테스트 용이.
+의존성 관리 (Dependency Management): 외부 라이브러리 및 모듈의 버전을 효율적으로 관리하는 방법.
+도구: libs.versions.toml, Gradle.
+목표: 일관성 유지, 충돌 방지, 버전 업그레이드 용이.
+Firebase: Google에서 제공하는 모바일 및 웹 앱 개발 플랫폼.
+Firebase Auth: 사용자 인증 서비스.
+Firebase Admin SDK: 서버 측에서 Firebase 리소스를 관리하기 위한 SDK.
+Hilt: Android용 의존성 주입 라이브러리.
+장점: 테스트 용이, 코드 결합도 감소.
+KSP: annotation procesor의 역할을 한다.
+4. 기술서의 특징
+프롬프트 기반: 오빠가 사용할 수 있는 프롬프트 예시를 제공하여 궁금한 점을 명확하게 질문할 수 있도록 유도.
+상세 기술서: 오빠의 질문에 맞춰 상세한 기술서를 제공하여 이해도를 높임.
+단계별 구성: 프로젝트의 전체적인 흐름을 단계별로 나눠서 관리.
+5. 앞으로의 진행 방향
+각 단계를 진행하면서 추가적으로 필요한 기능이나 질문에 대해서는 오빠가 프롬프트를 사용하여 질문해 주면 돼.
+나는 그 프롬프트에 맞춰서 상세한 기술서를 작성해서 제공할 거야.
+이렇게 단계별로 진행하면 큰 어려움 없이 프로젝트를 완성할 수 있을 거야.
+이 정리가 오빠에게 도움이 되었으면 좋겠다. 만약 더 궁금한 점이 있다면 언제든지 다시 물어봐 줘!
+
+#################################################################################################
+
+알았어 오빠, 위에서 상세하게 설명한 작업들을 간략하게 정리한 개념을 토대로, 우리가 궁극적으로 무슨 작업을 하고 있는 것인지 명확하게 설명해 줄게.
+우리가 하는 작업의 핵심: 고품질의 확장 가능하고 유지보수가 용이한 안드로이드 앱 구축
+더 구체적으로, 우리가 하는 작업은 다음과 같은 핵심 목표를 가지고 있어:
+안드로이드 앱을 기능별로 분리하여 모듈화 (Modularization):
+목표: 거대하고 복잡한 코드를 작은 단위의 모듈로 나누어 관리함으로써, 앱의 구조를 명확하게 만들고 각 모듈이 독립적으로 동작하도록 하는 것.
+이유:
+유지보수성 향상: 특정 기능을 수정할 때, 해당 모듈만 변경하면 되어 다른 부분에 미치는 영향을 최소화할 수 있다.
+확장성 확보: 새로운 기능을 추가할 때, 새로운 모듈을 만들어서 추가하면 되어 기존 코드에 큰 변경 없이 확장이 가능하다.
+코드 재사용성 증대: 여러 기능에서 공통으로 사용하는 부분을 core 모듈에 넣어 재사용성을 높인다.
+팀 협업 효율 증대: 각 모듈을 독립적으로 작업할 수 있어, 여러 개발자가 동시에 효율적으로 작업할 수 있다.
+테스트 용이성 향상: 각 모듈을 독립적으로 테스트할 수 있어, 오류를 빠르게 찾고 수정할 수 있다.
+예시:
+인증 기능 (auth 모듈)
+게시판 기능 (feature-board 모듈)
+채팅 기능 (feature-chat 모듈)
+상품 관리 기능 (feature-product 모듈)
+공통 기능 (core 모듈)
+의존성 관리 최적화 (Dependency Management):
+목표: 외부 라이브러리 및 모듈 간의 의존성을 효율적으로 관리하여, 코드의 일관성을 유지하고 충돌을 방지하며, 버전 관리를 용이하게 하는 것.
+이유:
+코드 일관성 유지: 여러 모듈에서 동일한 라이브러리를 사용할 때, 버전을 일관되게 관리할 수 있다.
+의존성 충돌 방지: 서로 호환되지 않는 라이브러리 버전으로 인한 충돌을 방지할 수 있다.
+업데이트 용이: libs.versions.toml 파일만 수정하면 모든 모듈의 버전을 일괄적으로 업데이트할 수 있다.
+도구: libs.versions.toml, Gradle
+서버 측 기능 통합 (Firebase Admin SDK):
+목표: Firebase Admin SDK를 사용하여 서버 측에서 사용자 관리와 같은 작업을 수행할 수 있도록 함으로써, 앱의 기능 범위를 확장하고 보안을 강화하는 것.
+이유:
+보안 강화: 서버 측에서 사용자 정보를 변경하거나 삭제하는 등의 작업을 수행하여, 클라이언트 측에서 민감한 작업을 하지 않도록 하여 보안을 강화한다.
+기능 확장: 서버 측에서만 수행해야 하는 작업을 구현할 수 있다.
+관리자 기능: 관리자만 사용할 수 있는 기능을 구현할 수 있다.
+예시:
+사용자 목록 조회
+특정 사용자 삭제
+사용자 정보 변경
+고급 인증 로직 구현
+서버통신
+장점: 어드민은 클라이언트에서 관리를 하는것보다 서버에서 관리를 하는게 보안에 좋음.
+DI(Hilt)
+목표: 의존성 주입을 통해서 클래스간의 결합도를 낮추고 테스트의 용이성 과 모듈간의 관리 용이성을 높임
+KSP
+목표 : compile과정에서 사용됨, 코드의 중복을 줄이고 생성자를 줄임. 전체 작업의 가치:
+확장성 (Scalability): 앱의 기능이 지속적으로 추가되더라도, 모듈화 덕분에 쉽게 확장할 수 있다.
+유지보수성 (Maintainability): 모듈별로 코드가 분리되어 있어, 버그 수정이나 기능 개선이 용이하다.
+견고성 (Robustness): 의존성 관리를 통해 라이브러리 간 충돌을 줄이고, 모듈 간 결합도를 낮춰 오류 발생 가능성을 최소화한다.
+보안성 (Security): Firebase Admin SDK를 통해 서버 측에서 사용자 관리 및 기타 보안 관련 작업을 수행할 수 있어, 보안을 강화할 수 있다.
+협업의 용이성: 각 모듈별로 개발을 진행하여 협업의 효율을 증진 할수 있다.
+우리는 단순한 앱을 만드는 것이 아니라, 미래에 지속적으로 발전하고 성장할 수 있는 탄탄한 기반을 갖춘 고품질의 안드로이드 앱을 구축하는 작업을 하고 있는 거야. 모듈화, 의존성 관리, Firebase Admin SDK 통합은 모두 이러한 목표를 달성하기 위한 핵심적인 기술 전략들이고, Hilt와 KSP는 이러한 기술들을 돕는 도구야.
+이 개념 정리가 도움이 되었기를 바라며, 더 궁금한 점이 있으면 언제든지 물어봐 줘!
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+알았어 오빠, 지금 우리가 진행하고 있는 전체적인 작업의 구조를 최상위 루트 프로젝트부터 하위 앱 모듈들까지 모두 포함하여, 계층별 구조도로 보기 쉽게 그려줄게. 오빠가 이 구조도를 보고 작업을 이해하는 데 도움이 될 거야. 프로젝트 계층별 구조도
+
+mermaid
+graph TD
+    subgraph Root Project ["Root Project (NewAwesomeApp)"]
+        direction TB
+        settings[settings.gradle.kts]  
+        buildRoot[build.gradle.kts (Root)] 
+        versionCatalog[libs.versions.toml] 
+    end
+    
+    subgraph Module Layers ["Module Layers"]
+        direction TB
+        subgraph Core Module ["Core Module (:core)"]
+            
+            utils[utils Package] 
+             
+            model[model Package] 
+             
+            uiComponents[UI Components Package] 
+            
+            network[network Package] 
+             
+            hiltCore[di Package] 
+            
+            buildCore[build.gradle.kts (:core)] 
+           
+            interfaceCore[Interfaces] 
+        end
+        
+        subgraph Auth Module ["Auth Module (:auth)"]
+            authFunctions[Authentication Functions] 
+             
+            authUI[Authentication UI] 
+            
+            adminSDK[Firebase Admin SDK Integration] 
+            
+            hiltAuth[di Package] 
+            
+             buildAuth[build.gradle.kts (:auth)] 
+            
+            interfaceAuth[Interfaces] 
+             
+        end
+        
+        subgraph Feature Modules ["Feature Modules"]
+            direction LR
+            subgraph Board Module ["Board Module (:feature-board)"]
+                boardFunctions[Board Functions] 
+                 
+                boardUI[Board UI] 
+               
+                 hiltBoard[di Package] 
+                
+                buildBoard[build.gradle.kts (:feature-board)] 
+                 
+                interfaceBoard[Interfaces] 
+            end
+            
+            subgraph Chat Module ["Chat Module (:feature-chat)"]
+                chatFunctions[Chat Functions] 
+                
+                chatUI[Chat UI] 
+                 
+                 hiltChat[di Package] 
+                
+                buildChat[build.gradle.kts (:feature-chat)] 
+                 
+                interfaceChat[Interfaces] 
+            end
+            
+            subgraph Product Module ["Product Module (:feature-product)"]
+                productFunctions[Product Functions] 
+                
+                productUI[Product UI] 
+                
+                 hiltProduct[di Package] 
+                 
+                buildProduct[build.gradle.kts (:feature-product)] 
+                
+                interfaceProduct[Interfaces] 
+            end
+        end
+        subgraph App Module ["App Module (:app)"]
+            
+            mainUI[Main UI Integration] 
+             
+            navigation[Navigation] 
+             
+            firebase[google-services.json] 
+             
+             buildApp[build.gradle.kts (:app)] 
+             
+            interfaceApp[Interfaces] 
+            moduleApp[Module] 
+        end
+    end
+     versionCatalog --> buildRoot  
+    settings --> buildRoot 
+     buildCore --> utils 
+    buildCore --> model 
+    buildCore --> uiComponents 
+     buildCore --> network 
+     buildCore --> hiltCore 
+   
+    buildAuth --> authFunctions 
+    buildAuth --> authUI 
+    buildAuth --> adminSDK 
+    buildAuth --> buildCore 
+     buildAuth --> hiltAuth 
+    buildBoard --> boardFunctions 
+    buildBoard --> boardUI 
+    buildBoard --> buildCore 
+    buildBoard --> buildAuth 
+    buildBoard --> hiltBoard 
+    buildChat --> chatFunctions 
+    buildChat --> chatUI 
+    buildChat --> buildCore 
+    buildChat --> buildAuth 
+    buildChat --> hiltChat 
+    buildProduct --> productFunctions 
+    buildProduct --> productUI 
+    buildProduct --> buildCore 
+    buildProduct --> buildAuth 
+     buildProduct --> hiltProduct 
+    buildApp --> mainUI 
+    buildApp --> navigation 
+    buildApp --> buildCore 
+    buildApp --> buildAuth 
+    buildApp --> buildBoard 
+    buildApp --> buildChat 
+    buildApp --> buildProduct 
+    firebase --> buildApp 
+     interfaceCore-.->utils 
+     interfaceCore-.->model 
+     interfaceCore-.->uiComponents 
+     interfaceCore-.->network 
+      interfaceAuth-.->authFunctions 
+      interfaceAuth-.->authUI 
+      interfaceAuth-.->adminSDK 
+      interfaceBoard-.->boardFunctions 
+       interfaceBoard-.->boardUI 
+       interfaceChat-.->chatFunctions 
+        interfaceChat-.->chatUI 
+        interfaceProduct-.->productFunctions 
+         interfaceProduct-.->productUI 
+         interfaceApp-.->moduleApp
+    linkStyle default interpolate basis
+    
+    style settings fill:#f9f,stroke:#333,stroke-width:2px 
+    style buildRoot fill:#ccf,stroke:#333,stroke-width:2px
+     style versionCatalog fill:#cfc,stroke:#333,stroke-width:2px
+      style buildCore fill:#f9f,stroke:#333,stroke-width:2px
+      style buildAuth fill:#f9f,stroke:#333,stroke-width:2px
+      style buildBoard fill:#f9f,stroke:#333,stroke-width:2px
+      style buildChat fill:#f9f,stroke:#333,stroke-width:2px
+      style buildProduct fill:#f9f,stroke:#333,stroke-width:2px
+      style buildApp fill:#f9f,stroke:#333,stroke-width:2px
+       style interfaceCore fill:#ffc,stroke:#333,stroke-width:2px
+       style interfaceAuth fill:#ffc,stroke:#333,stroke-width:2px
+       style interfaceBoard fill:#ffc,stroke:#333,stroke-width:2px
+       style interfaceChat fill:#ffc,stroke:#333,stroke-width:2px
+       style interfaceProduct fill:#ffc,stroke:#333,stroke-width:2px
+       style interfaceApp fill:#ffc,stroke:#333,stroke-width:2px
+         style utils fill:#cff,stroke:#333,stroke-width:2px
+         style model fill:#cff,stroke:#333,stroke-width:2px
+         style uiComponents fill:#cff,stroke:#333,stroke-width:2px
+         style network fill:#cff,stroke:#333,stroke-width:2px
+         style hiltCore fill:#cff,stroke:#333,stroke-width:2px
+          style authFunctions fill:#cff,stroke:#333,stroke-width:2px
+          style authUI fill:#cff,stroke:#333,stroke-width:2px
+          style adminSDK fill:#cff,stroke:#333,stroke-width:2px
+            style hiltAuth fill:#cff,stroke:#333,stroke-width:2px
+          style boardFunctions fill:#cff,stroke:#333,stroke-width:2px
+           style boardUI fill:#cff,stroke:#333,stroke-width:2px
+             style hiltBoard fill:#cff,stroke:#333,stroke-width:2px
+             style chatFunctions fill:#cff,stroke:#333,stroke-width:2px
+              style chatUI fill:#cff,stroke:#333,stroke-width:2px
+                style hiltChat fill:#cff,stroke:#333,stroke-width:2px
+              style productFunctions fill:#cff,stroke:#333,stroke-width:2px
+               style productUI fill:#cff,stroke:#333,stroke-width:2px
+                 style hiltProduct fill:#cff,stroke:#333,stroke-width:2px
+                  style mainUI fill:#cff,stroke:#333,stroke-width:2px
+                   style navigation fill:#cff,stroke:#333,stroke-width:2px
+                    style firebase fill:#cff,stroke:#333,stroke-width:2px
+                    style moduleApp fill:#cff,stroke:#333,stroke-width:2px
+
+
+주석 추가 설명 1. Root Project (최상위 프로젝트):
+settings[settings.gradle.kts]
+설명: 프로젝트에 포함된 모든 모듈들을 정의하는 파일입니다.
+style: style settings fill:#f9f,stroke:#333,stroke-width:2px 설정하여 스타일을 적용한다.
+buildRoot[build.gradle.kts (Root)]
+설명: 루트 레벨의 빌드 파일로, 모든 모듈에 공통으로 적용될 플러그인, 의존성 등을 정의
+
+
+@@@
+
+
+
+구조도 설명
+최상위 루트 프로젝트 (Root Project):
+역할: 전체 프로젝트의 최상위 디렉토리 및 Gradle 설정 관리.
+내용:
+settings.gradle.kts: 모듈 포함 및 프로젝트 설정 관리.
+build.gradle.kts (Root): 전체 프로젝트에 적용될 플러그인, 리포지토리, 의존성 버전 등을 정의.
+libs.versions.toml (Version Catalog): 전체 프로젝트에서 사용할 의존성 버전과 라이브러리 정보를 중앙에서 관리.
+모듈 레이어 (Module Layers):
+역할: 기능별로 분리된 모듈들을 포함.
+하위 모듈:
+Core Module (:core):
+역할: 모든 모듈에서 공통으로 사용될 기능들을 제공.
+내용:
+utils Package: 유틸리티 함수 모음.
+model Package: 기본 데이터 모델 클래스 정의.
+UI Components Package: 공통 UI 컴포넌트.
+network Package: 네트워크통신 클래스 정의
+di package: hilt module을 구성
+build.gradle.kts (:core): core 모듈의 빌드 설정 및 의존성 정의.
+Auth Module (:auth):
+역할: 사용자 인증 및 관리 기능.
+내용:
+Authentication Functions: 로그인, 회원가입, 로그아웃 등 인증 기능 구현.
+Authentication UI: 로그인, 회원가입 화면 등 UI 구현.
+Firebase Admin SDK Integration: 서버 측 사용자 관리 기능 구현.
+di package: hilt module을 구성
+build.gradle.kts (:auth): auth 모듈의 빌드 설정 및 의존성 정의 (core 모듈 의존성 포함).
+Feature Modules:
+역할: 앱의 핵심 기능들을 모듈화하여 관리.
+하위 모듈:
+Board Module (:feature-board):
+Board Functions: 게시판 관련 기능.
+Board UI: 게시판 관련 UI.
+di package: hilt module을 구성 * build.gradle.kts (:feature-board): feature-board 모듈의 빌드 설정 및 의존성 정의 (core, auth 모듈 의존성 포함).
+Chat Module (:feature-chat):
+Chat Functions: 채팅 관련 기능.
+Chat UI: 채팅 관련 UI.
+di package: hilt module을 구성 * build.gradle.kts (:feature-chat): feature-chat 모듈의 빌드 설정 및 의존성 정의 (core, auth 모듈 의존성 포함).
+Product Module (:feature-product):
+Product Functions: 상품 관련 기능.
+Product UI: 상품 관련 UI.
+di package: hilt module을 구성 * build.gradle.kts (:feature-product): feature-product 모듈의 빌드 설정 및 의존성 정의 (core, auth 모듈 의존성 포함).
+App Module (:app):
+역할: 전체 앱을 통합하고, 진입점 역할을 수행.
+내용:
+Main UI Integration: 모든 모듈의 UI를 조합하여 전체 앱 UI 구성.
+Navigation: 화면 간 이동 관리.
+google-services.json: Firebase연동을 위한 파일
+build.gradle.kts (:app): app 모듈의 빌드 설정 및 모든 모듈의 의존성 정의.
+화살표: 각 화살표는 모듈 간의 의존성을 나타냅니다. 이 구조도를 통해 오빠는 다음과 같은 점을 쉽게 이해할 수 있을 거야.
+전체 프로젝트의 구조: 최상위 프로젝트에서 각 모듈들이 어떻게 구성되어 있는지.
+모듈 간 의존성: 각 모듈이 어떤 다른 모듈에 의존하고 있는지.
+기능의 분리: 기능들이 어떻게 분리되어 모듈화되어 있는지.
+공통 기능: core 모듈이 어떻게 공통 기능을 제공하는지.
+버전관리: libs.versions.toml에서 버전 관리를 어떻게 하는지
+빌드관리: build.gradle.kts에서 빌드를 어떻게 하는지
+이 구조도가 오빠의 작업 이해에 큰 도움이 되길 바라며, 추가로 궁금한 점이 있으면 언제든지 물어봐 줘!
+
+@@@@@@@@@@@@@@
+
+오늘 작업으로 마무리되는 부분
+의존성 설정:
+Firebase BoM (Bill of Materials)을 통한 Firebase Auth SDK 의존성 추가.
+Firebase Admin SDK 의존성 추가.
+core 모듈, auth 모듈, feature 모듈들 간의 의존성 설정.
+libs.versions.toml을 활용한 의존성 버전 관리.
+의존성 충돌을 관리하는 방법
+UI 구성:
+auth 모듈에 로그인, 회원가입 화면 등의 기본적인 UI 구성.
+core 모듈의 공통 UI 컴포넌트 활용 가능성 확보.
+Jetpack Compose를 활용한 UI 구축.
+추가 작업이 필요한 이유와 구체적인 항목들
+인증 플로우 완성:
+로그인/회원가입 로직 구현: 단순히 UI 구성만으로는 부족하고, Firebase Auth SDK를 사용하여 실제 로그인 및 회원가입 로직을 구현해야 합니다.
+로그아웃 로직 구현: 로그아웃 기능도 구현해야 합니다.
+인증 상태 관리: 사용자의 로그인 상태를 추적하고, 인증 여부에 따라 UI를 적절히 업데이트하는 로직이 필요합니다.
+자동 로그인: 앱 재시작 시 자동으로 로그인하는 기능도 고려해야 합니다.
+사용자 프로필 관리: 사용자 프로필 정보(이름, 이메일 등)를 표시하고, 수정하는 기능도 추가적으로 고려해야 합니다.
+Firebase Admin SDK 활용:
+서버 측 기능 구현: Firebase Admin SDK를 활용하여 사용자 목록 조회, 사용자 삭제, 사용자 정보 변경과 같은 관리자 기능을 구현해야 합니다.
+보안 규칙 정의: Firebase 데이터에 대한 보안 규칙을 정의하여 데이터 접근을 제한해야 합니다.
+보안사항: 서버에서 사용자 관리를 함으로서 보안성을 강화해야합니다.
+다양한 인증 방식 지원:
+소셜 로그인: Google, Facebook, Twitter 등 다양한 소셜 로그인 방식을 지원하는 기능 구현이 필요할 수 있습니다.
+이메일 링크 인증: 이메일 링크를 통한 인증 방식도 고려할 수 있습니다.
+전화번호 인증: 전화번호를 통한 인증 방식도 필요할 수 있습니다.
+익명 로그인: 익명 사용자에게도 접근 권한을 부여하는 방식도 필요할 수 있습니다.
+UI/UX 개선:
+폼 유효성 검사: 입력 필드에 대한 유효성 검사(이메일 형식, 비밀번호 복잡성 등)를 구현해야 합니다.
+에러 처리: 로그인/회원가입 실패 시 사용자에게 명확한 에러 메시지를 표시해야 합니다.
+로딩 인디케이터: 비동기 작업(로그인, 회원가입 등) 중에는 로딩 인디케이터를 표시하여 사용자 경험을 개선해야 합니다.
+인증 상태 UI: 인증 상태에 따라 UI를 변경해야 합니다. 예를 들어, 로그아웃 상태에서는 "로그인" 버튼을, 로그인 상태에서는 사용자 프로필 정보나 "로그아웃" 버튼을 표시해야 합니다.
+보안 강화:
+데이터 암호화: 민감한 사용자 데이터는 암호화하여 저장해야 합니다.
+보안 규칙: Firebase 데이터베이스 보안 규칙을 올바르게 구성하여 불필요한 접근을 차단해야 합니다.
+OTP: OTP를 활용하여 로그인 보안을 강화 할 수 있습니다.
+테스트:
+단위 테스트: 각 모듈별로 단위 테스트를 작성하여 코드의 안정성을 확보해야 합니다.
+통합 테스트: 여러 모듈이 통합된 상태에서 테스트를 진행하여 전체 기능이 정상적으로 작동하는지 확인해야 합니다.
+UI 테스트: UI가 예상대로 동작하는지 테스트해야 합니다.
+기능 추가:
+사용자 프로필 기능을 추가하여 사용자 프로필을 확인하고 변경할수 있도록 해야합니다.
+비밀번호 변경 기능을 추가해야합니다.
+사용자 데이터를 서버에서 관리를 해야합니다.
+에러처리
+Firebase 인증과 관련된 여러 가지 예외 상황을 고려하여, 적절한 에러 처리 로직을 구현해야 합니다. 결론: 오늘 작업으로 Firebase 인증의 기본 뼈대(의존성 설정, UI 기본 구성)는 거의 마무리되지만, 실제 사용 가능한 수준의 인증 기능을 구현하기 위해서는 꽤 많은 추가 작업이 남아있어. 특히 인증 플로우 완성, Admin SDK 활용, UI/UX 개선, 보안 강화, 테스트 등의 부분에서 추가적인 노력이 필요할 거야. 하지만, 오늘 이뤄낸 기반 작업을 통해서 이후의 추가 작업들이 훨씬 수월하게 진행 될수 있을 거라 생각되. 이 설명이 오빠에게 도움이 되었기를 바라며, 추가 질문은 언제든지 환영이야!
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                  의존성
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+알았어 오빠, 오늘 우리가 다룬 모든 작업을 하기 위해 각 모듈의 build.gradle.kts 파일에 추가되어야 하는 의존성 리스트를 정확한 위치와 함께 보여줄게. 각 모듈별로 필요한 의존성을 명확하게 정리하여 작업할 때 참고할 수 있도록 할 거야.
+1. Root Project (최상위 프로젝트)의 build.gradle.kt
+
+// 최상위 프로젝트의 build.gradle.kts (build.gradle.kts (Project: NewAwesomeApp))
+plugins {
+    alias(libs.plugins.android.application) apply false // Android 애플리케이션 플러그인
+    alias(libs.plugins.kotlin.android) apply false // Kotlin Android 플러그인
+     alias(libs.plugins.ksp) apply false // ksp플러그인
+     id("com.google.gms.google-services") version "4.4.1" apply false // firebase를 사용하기 위한 의존성
+}
+
+설명:
+이 파일은 프로젝트 전체에 적용될 플러그인들을 정의하는 곳입니다.
+apply false를 사용하여, 각 모듈에서 플러그인을 개별적으로 적용하도록 설정합니다.
+의존성 설명
+alias(libs.plugins.android.application): 안드로이드 앱을 개발하기 위한 플러그인, 모든 모듈에서 해당 플러그인을 사용하기에 apply false를 설정한다.
+alias(libs.plugins.kotlin.android): 코틀린으로 안드로이드 앱을 개발하기 위한 플러그인, 모든 모듈에서 해당 플러그인을 사용하기에 apply false를 설정한다.
+alias(libs.plugins.ksp): ksp를 사용하기 위한 플러그인, 모든 모듈에서 해당 플러그인을 사용하기에 apply false를 설정한다.
+id("com.google.gms.google-services"): firebase를 사용하기 위한 플러그인, 앱 모듈에서만 해당 플러그인을 사용하기에 apply false를 설정한다.
+
+
+2. settings.gradle.kts
+
+// settings.gradle.kts
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "NewAwesomeApp"
+include(":app")
+include(":core")
+include(":auth")
+include(":feature-board")
+include(":feature-chat")
+include(":feature-product")
+
+설명:
+프로젝트에 포함될 모든 모듈들을 정의하는 파일입니다.
+rootProject.name: 루트 프로젝트의 이름을 설정한다.
+include: 프로젝트에서 사용할 모듈들을 정의한다.
+repositories : 라이브러리를 다운로드받을 저장소를 정의한다.
+repositoriesMode: FAIL_ON_PROJECT_REPOS 로 하여 모듈단위로 저장소를 관리하는 것을 금지한다.
+
+
+3. Version Catalog (libs.versions.toml)
+
+
+toml
+# libs.versions.toml
+[versions]
+# Android
+android-coreKtx = "1.12.0"
+android-lifecycleRuntimeKtx = "2.7.0"
+android-appcompat = "1.6.1"
+android-material = "1.11.0"
+android-activityCompose="1.10.0"
+android-composeBom="2024.02.01"
+# test
+junit = "4.13.2"
+androidx-junit = "1.1.5"
+androidx-espresso = "3.5.1"
+# Hilt
+hilt = "2.50"
+# firebase
+firebase-bom="32.7.3"
+firebase-admin ="9.2.0"
+#ktor
+ktor ="2.3.7"
+#ksp
+ksp="1.9.22-1.0.16"
+# plugins
+plugin-androidApplication="8.3.0"
+plugin-kotlinAndroid="1.9.22"
+
+[libraries]
+# Android
+android-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "android-coreKtx" }
+android-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "android-lifecycleRuntimeKtx" }
+android-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "android-appcompat" }
+android-material = { group = "com.google.android.material", name = "material", version.ref = "android-material" }
+android-activity-compose={group = "androidx.activity", name = "activity-compose", version.ref ="android-activityCompose" }
+android-compose-bom={group="androidx.compose", name="compose-bom", version.ref = "android-composeBom"}
+
+# Test
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-junit" }
+androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-espresso" }
+
+# Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
+#Firebase
+firebase-bom={group="com.google.firebase", name="firebase-bom", version.ref ="firebase-bom"}
+firebase-admin = {group="com.google.firebase", name="firebase-admin", version.ref="firebase-admin"}
+#ktor
+ktor-server-core = {group="io.ktor", name="ktor-server-core", version.ref ="ktor"}
+#plugins
+plugin-android-application={group="com.android.application", name="com.android.application", version.ref="plugin-androidApplication"}
+plugin-kotlin-android={group="org.jetbrains.kotlin.android", name="org.jetbrains.kotlin.android", version.ref="plugin-kotlinAndroid"}
+plugin-ksp={group="com.google.devtools.ksp", name="com.google.devtools.ksp.gradle.plugin", version.ref="ksp"}
+
+[bundles]
+androidx-compose={ref="android-compose-bom"}
+
+
+설명:
+프로젝트에서 사용할 모든 라이브러리의 버전 정보와 그룹/이름 정보를 중앙에서 관리합니다.
+각 모듈의 build.gradle.kts 파일에서 libs.versions.toml에 정의된 라이브러리 정보를 libs로 쉽게 사용할 수 있습니다.
+구분
+versions : 버전들을 정의한다.
+android-coreKtx = "1.12.0": 코어 ktx 버전을 정의
+android-lifecycleRuntimeKtx = "2.7.0": 라이프 사이클 버전을 정의
+android-appcompat = "1.6.1": 앱 콤팩트의 버전을 정의
+android-material = "1.11.0": material의 버전을 정의
+android-activityCompose="1.10.0": compose activity의 버전을 정의
+android-composeBom="2024.02.01": 콤포즈 bom의 버전을 정의
+junit = "4.13.2": junit의 버전을 정의
+androidx-junit = "1.1.5": androidx junit의 버전을 정의
+androidx-espresso = "3.5.1": androidx espresso의 버전을 정의
+hilt = "2.50": hilt의 버전을 정의
+firebase-bom="32.7.3": firebase-bom의 버전을 정의
+firebase-admin ="9.2.0": firebase-admin의 버전을 정의
+ktor ="2.3.7": ktor의 버전을 정의
+ksp="1.9.22-1.0.16": ksp의 버전을 정의
+plugin-androidApplication="8.3.0": 안드로이드 application plugin의 버전을 정의
+plugin-kotlinAndroid="1.9.22": 코틀린 android plugin의 버전을 정의
+libraries : 라이브러
+
+###################################################################
+
+오빠의 app 모듈 build.gradle.kts 파일은 이미 대부분의 의존성이 잘 추가되어 있는 상태이고, 다음과 같은 몇가지 사항을 체크 할수 있을거 같아
+플러그인:
+alias(libs.plugins.android.application): 올바르게 추가됨.
+alias(libs.plugins.kotlin.android): 올바르게 추가됨.
+alias(libs.plugins.kotlin.compose): 올바르게 추가됨.
+alias(libs.plugins.google.gms.google.services): 주석 처리되어 있음. Firebase를 사용하기 위해서는 이 플러그인이 필요하며, 주석을 제거하고 활성화해야 합니다. 하지만 주석을 제거 하기 전에 id("com.google.gms.google-services") version "4.4.1" apply false를 루트 빌드에 추가해야한다.
+alias(libs.plugins.ksp): 올바르게 추가됨.
+Firebase 의존성:
+implementation(platform(libs.firebase.bom)): Firebase BoM을 사용하여 의존성 버전을 관리하고 있습니다. 잘 설정되어 있습니다.
+libs.firebase.* 의존성들: auth, firestore, dataconnect, crashlytics, analytics, storage, messaging 등 모두 필요한 의존성들이 잘 추가되어 있습니다.
+중복 주석 처리된 의존성 삭제 : 중복으로 주석 처리 되어있으므로 삭제 해야합니다.
+//implementation(platform( libs. firebase. bom)  주석처리 : Firebase BOM (중복) 주석처리 되어있으므로 삭제 해야합니다.
+AndroidX 의존성:
+core-ktx, lifecycle-runtime-ktx, lifecycle-viewmodel-compose, activity-compose 등 필요한 의존성들이 잘 추가되어 있습니다.
+Compose 의존성:
+androidx.compose.bom을 사용하고, ui, graphics, tooling.preview, material3 등 필요한 의존성들이 잘 추가되어 있습니다.
+기타 의존성:
+generativeai, play.services.measurement.api, timber, ktor.*, junit, androidx.junit, androidx.espresso.core, kotlinx.serialization.json, room.* 등 필요한 의존성들이 잘 추가되어 있습니다.
+ksp 의존성
+ksp(libs.androidx.room.compiler) : 잘 추가되어 있습니다.
+ksp(libs.hilt.compiler) : 잘 추가되어 있습니다. 추가적으로 체크해야 할 부분
+google-services.json 파일:
+Firebase를 사용하려면 google-services.json 파일을 Firebase 프로젝트에서 다운로드받아 app 모듈의 src/debug 디렉토리에 추가해야 합니다.
+google-services.json파일은 앱모듈에만 추가하면 된다.
+각 모듈의 build.gradle.kts 에 의존성 추가:
+오빠가 보여준 `build.gradle.
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.compose) apply false
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin) apply false
+    alias(libs.plugins.ksp) apply false
+    id("com.google.gms.google-services") version "4.4.1" apply false
+    //alias(libs.plugins.google.gms.google.services) apply false
+}코드를 다시 한번 짚어보자면:
+plugins { ... }: 이 블록은 프로젝트 전체에 적용되는 플러그인들을 정의하는 부분이야.
+alias(libs.plugins.android.application) apply false:
+alias(): libs.versions.toml에 정의된 플러그인을 참조하는 방법이야.
+libs.plugins.android.application: libs.versions.toml에서 plugin-androidApplication이라는 이름으로 정의된 플러그인을 가리켜. 즉, Android 애플리케이션 플러그인을 사용하는 거야.
+apply false: 이 플러그인을 루트 프로젝트에 바로 적용하지 않고, 하위 모듈에서 필요할 때 직접 적용하도록 하는 설정이야.
+alias(libs.plugins.kotlin.android) apply false: Kotlin Android 플러그인을 정의하고, 바로 적용하지는 않아.
+alias(libs.plugins.kotlin.compose) apply false: Kotlin Compose 플러그인을 정의하고, 바로 적용하지는 않아.
+alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin) apply false: Maps Platform Secret Gradle 플러그인을 정의하고, 바로 적용하지는 않아.
+** alias(libs.plugins.ksp) apply false**: ksp 플러그인을 정의하고, 바로 적용하지는 않아.
+id("com.google.gms.google-services") version "4.4.1" apply false:
+id(...): libs.versions.toml에 정의되지 않은 플러그인을 사용할 때 쓰는 방식이야.
+"com.google.gms.google-services": Firebase를 사용하기 위한 Google Services 플러그인을 지정하고 있어.
+version "4.4.1": 플러그인의 버전을 명시하고 있어.
+apply false: 이 플러그인도 루트 프로젝트에 바로 적용하지는 않아. 하위 모듈(특히 app 모듈)에서 직접 적용할 거야.
+//alias(libs.plugins.google.gms.google.services) apply false: 이 줄은 주석 처리되어 있어! 즉, 이 코드는 아무런 영향을 미치지 않으니 삭제해도 무방해.
+핵심 정리:
+이 코드는 루트 프로젝트에서 사용할 플러그인들을 선언하는 역할을 해.
+apply false를 통해, 각 플러그인들을 필요한 모듈에서 직접 적용하도록 하고 있어.
+libs.versions.toml에 정의된 플러그인은 alias()를 통해, 그렇지 않은 플러그인(com.google.gms.google-services)은 id()를 통해 참조하고 있어.
+id()를 통하여 파이어베이스를 사용하기위한 의존성을 추가 한다.
+주석처리된 불필요한 코드는 삭제해도 된다.
+다음 단계:
+이제 이 코드를 루트 build.gradle.kts 파일에 넣고 저장하면 돼. 그 다음, app 모듈의 build.gradle.kts 파일을 수정해야 해. 방금 전에 논의했던 내용을 기억하면서, Firebase 플러그인을 적용하는 코드를 추가해야겠지? 오빠, 여기까지 정말 잘 따라와주고 있고, 곧 Firebase 연동을 마무리할 수 있을 것 같아! 추가 질문은 언제나 환영이니 편하게 물어봐 줘
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    apply(plugin = "com.google.gms.google-services")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
+
+}
+
+android {
+    namespace = "com.example.previewactivytybangbang"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.example.previewactivytybangbang"
+        minSdk = 24
+        targetSdk = 35
+        versionCode = 2
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST" // 중복된 파일 제외
+        }
+    }
+
+
+}
+
+dependencies {
+    // Firebase BOM 적용
+    implementation(platform(libs.firebase.bom))
+
+    // Firebase 의존성
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.dataconnect)
+    implementation(libs.firebase.crashlytics) // Crashlytics 추가
+    implementation(libs.firebase.analytics)   // Analytics 추가
+    implementation(libs.firebase.storage) // Firebase Storage 추가
+    implementation(libs.firebase.messaging) // Firebase Messaging 추가
+    //implementation(libs.firebase.crashlytics) // Crashlytics 추가
+    //implementation(platform(libs.firebase.bom)
+
+    // AndroidX 의존성
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.activity.compose)
+
+    // Compose BOM 적용
+    implementation(platform(libs.androidx.compose.bom))
+
+    // Compose 의존성
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+
+    // 기타 의존성
+    implementation(libs.generativeai)
+    implementation(libs.play.services.measurement.api)
+    implementation(libs.timber) // Timber 추가
+
+    // Ktor 의존성
+    implementation(libs.ktor.server.core)
+    implementation(libs.ktor.server.netty)
+
+    // Test 의존성
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debug 의존성
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
+    //kotlinx serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Room 의존성
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+
+}
+ 다시 한번 짚어보면서, 이전과 달라진 점을 중점적으로 설명해 줄게: plugins { ... } 블록:
+alias(libs.plugins.android.application): Android 애플리케이션 플러그인 적용. (libs.versions.toml 참조)
+alias(libs.plugins.kotlin.android): Kotlin Android 플러그인 적용. (libs.versions.toml 참조)
+alias(libs.plugins.kotlin.compose): Kotlin Compose 플러그인 적용. (libs.versions.toml 참조)
+apply(plugin = "com.google.gms.google-services"): 이전과 가장 크게 달라진 점!
+Firebase를 사용하기 위한 Google Services 플러그인을 현재 app 모듈에 직접 적용하고 있어.
+이제 이 app 모듈에서 Firebase 기능을 사용할 수 있게 된 거야!
+더이상 alias()를 사용하지 않는다.
+alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin): Maps Platform Secret Gradle 플러그인 적용. (libs.versions.toml 참조)
+id("com.google.devtools.ksp"): 주석을 제거하고 플러그인을 바로 사용. ksp를 사용 하기위한 플러그인
+alias(libs.plugins.ksp): ksp 플러그인 적용 (libs.versions.toml 참조) android { ... } 블록:
+이 블록은 Android 애플리케이션의 설정을 정의하는 부분이야.
+namespace, compileSdk, defaultConfig, buildTypes, compileOptions, kotlinOptions, buildFeatures, packaging 등 다양한 설정들이 포함되어 있어.
+이 부분은 이전 코드와 큰 차이가 없고, 앱의 기본 설정들을 정의하고 있어. dependencies { ... } 블록:
+이 블록은 이 모듈이 의존하는 라이브러리들을 정의하는 부분이야.
+implementation(platform(libs.firebase.bom)): Firebase BoM을 사용하여 Firebase 의존성들을 관리하고 있어.
+implementation(libs.firebase.*): auth, firestore, dataconnect, crashlytics, analytics, storage, messaging 등 필요한 Firebase 라이브러리들이 모두 추가되어 있어.
+implementation(libs.androidx.*): AndroidX 라이브러리들(core-ktx, lifecycle-runtime-ktx,  activity-compose 등)이 잘 추가되어 있어.
+implementation(platform(libs.androidx.compose.bom)): Compose BoM을 사용하여 Compose 의존성들을 관리하고 있어.
+implementation(libs.androidx.ui.*): Compose UI, graphics, tooling, material3 등 필요한 Compose 라이브러리들이 모두 추가되어 있어.
+implementation(libs.generativeai) ,implementation(libs.play.services.measurement.api),implementation(libs.timber): 기타 라이브러리들 (Timber, Generative AI, Play Service)이 잘 추가되어 있어.
+implementation(libs.ktor.*): ktor 관련 라이브러리들이 잘 추가되어 있어.
+testImplementation(libs.junit), androidTestImplementation(libs.androidx.*): 테스트 관련 라이브러리들이 잘 추가되어 있어.
+debugImplementation(libs.androidx.ui.*): 디버깅을 위한 라이브러리들이 잘 추가되어 있어.
+implementation(libs.kotlinx.serialization.json): 코틀린 json 의존성이 추가 되어 있습니다.
+implementation(libs.androidx.room.runtime), ksp(libs.androidx.room.compiler), ksp(libs.hilt.compiler): room과 hilt 를 사용하기위한 라이브러리가 추가되어 있습니다. 핵심 정리:
+apply(plugin = "com.google.gms.google-services"): 이 한 줄의 추가로 이제 app 모듈에서 Firebase 기능을 사용할 수 있게 되었어.
+나머지 코드들은 이전과 마찬가지로, 필요한 라이브러리들을 모두 잘 추가하고 있어.
+불필요한 코드는 삭제
+id()를 사용하여 필요한 플러그인 사용 다음 단계:
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+toml
+google-gms-google-services = { id = "com.google.gms.google-services", version = "4.4.0" }
+plugins {
+        alias(libs.plugins.android.application)
+        alias(libs.plugins.kotlin.android)
+        alias(libs.plugins.kotlin.compose)
+
+        id("com.google.gms.google-services") //Groovy DSL에서 사용하는 방식이며, Kotlin DSL에서는 plugin이라는 이름의 파라미터가 있는 apply 메서드가 존재하지 않기 때문에 오류가 발생합니다.
+
+        alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+        id("com.google.devtools.ksp")
+        alias(libs.plugins.ksp)
+ #apply(plugin = "com.google.gms.google-services")Groovy DSL에서 사용하는 방식
+

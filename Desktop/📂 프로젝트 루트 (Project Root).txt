@@ -1,0 +1,385 @@
+📂 프로젝트 루트 (Project Root)
+   ├── 📁 app (메인 애플리케이션 모듈)
+   │    ├── 📁 src
+   │    │    ├── main (앱의 주요 코드)
+   │    │    │    ├── java (코틀린/자바 소스 코드)
+   │    │    │    │    ├── com.example.myapp
+   │    │    │    │    │    ├── 📁 ui (UI 관련 코드 - Presentation 계층)
+   │    │    │    │    │    │    ├── MainActivity.kt
+   │    │    │    │    │    │    ├── Fragment.kt
+   │    │    │    │    │    ├── 📁 data (데이터 관리 계층)
+   │    │    │    │    │    │    ├── Repository.kt
+   │    │    │    │    │    │    ├── Database.kt
+   │    │    │    │    │    │    ├── ApiService.kt
+   │    │    │    │    │    ├── 📁 domain (비즈니스 로직 계층)
+   │    │    │    │    │    │    ├── UseCase.kt
+   │    │    │    │    │    │    ├── Model.kt
+   │    │    │    │    │    ├── 📁 di (의존성 주입 - Dependency Injection 계층)
+   │    │    │    │    │    │    ├── AppModule.kt
+   │    │    │    │    │    │    ├── NetworkModule.kt
+   │    │    │    │    ├── AndroidManifest.xml (앱 구성 파일)
+   │    │    ├── test (테스트 코드)
+   │
+   ├── 📁 gradle (Gradle 빌드 시스템 관련 파일)
+   │    ├── gradle.properties
+   │    ├── settings.gradle
+   │
+   ├── 📁 build (컴파일된 APK 및 빌드 결과)
+   ├── 📁 libs (외부 라이브러리)
+   ├── 📁 assets (애플리케이션 리소스)
+   ├── 📁 res (UI 및 기타 리소스)
+   │    ├── drawable (이미지 파일)
+   │    ├── layout (XML UI 파일)
+   │    ├── values (문자열 및 색상 설정)
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+📂 프로젝트 루트 (Project Root)
+   ├── 📁 core (핵심 로직 및 공통 모듈)
+   │    ├── BaseViewModel.kt
+   │    ├── NetworkClient.kt
+   │    ├── DependencyInjection.kt
+   │
+   ├── 📁 data (데이터 관리 계층)
+   │    ├── repository (데이터 저장소)
+   │    │    ├── UserRepository.kt
+   │    │    ├── TaskRepository.kt
+   │    │
+   │    ├── database (로컬 데이터)
+   │    │    ├── AppDatabase.kt
+   │    │    ├── Dao.kt
+   │    │
+   │    ├── api (네트워크 API)
+   │         ├── ApiService.kt
+   │         ├── RetrofitInstance.kt
+   │
+   ├── 📁 domain (비즈니스 로직 계층)
+   │    ├── model (데이터 모델)
+   │    │    ├── User.kt
+   │    │    ├── Task.kt
+   │    │
+   │    ├── usecase (유즈케이스)
+   │         ├── GetTasksUseCase.kt
+   │         ├── LoginUserUseCase.kt
+   │
+   ├── 📁 presentation (UI 및 화면 계층)
+   │    ├── feature (화면별 기능)
+   │    │    ├── login (로그인 화면)
+   │    │    │    ├── LoginFragment.kt
+   │    │    │    ├── LoginViewModel.kt
+   │    │    │
+   │    │    ├── home (홈 화면)
+   │    │         ├── HomeFragment.kt
+   │    │         ├── HomeViewModel.kt
+   │
+   ├── 📁 di (의존성 주입 계층)
+   │    ├── AppModule.kt
+   │    ├── ViewModelModule.kt
+   │
+   ├── 📁 utils (유틸리티 및 공통 기능)
+   │    ├── DateFormatter.kt
+   │    ├── StringExtensions.kt
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+📂 TaskManagerApp (프로젝트 루트)
+   ├── 📁 core (핵심 로직 및 공통 모듈)
+   │    ├── BaseViewModel.kt  // ViewModel을 확장하여 기본 기능을 제공하는 클래스
+   │    ├── NetworkClient.kt  // Retrofit을 이용한 네트워크 설정
+   │    ├── DependencyInjection.kt  // Hilt를 이용한 의존성 주입 설정
+   │
+   ├── 📁 data (데이터 관리 계층)
+   │    ├── repository (데이터 저장소)
+   │    │    ├── UserRepository.kt  // 사용자 관련 데이터 처리를 담당하는 저장소 클래스
+   │    │    ├── TaskRepository.kt  // 할 일(Task) 관련 데이터 처리를 담당하는 저장소 클래스
+   │    │
+   │    ├── database (로컬 데이터)
+   │    │    ├── AppDatabase.kt  // Room 데이터베이스 설정을 담당하는 클래스
+   │    │    ├── TaskDao.kt  // Task 데이터를 조회 및 조작하는 DAO 인터페이스
+   │    │
+   │    ├── api (네트워크 API)
+   │         ├── ApiService.kt  // 서버와의 API 통신을 담당하는 인터페이스
+   │         ├── RetrofitInstance.kt  // Retrofit 인스턴스를 생성 및 설정하는 클래스
+   │
+   ├── 📁 domain (비즈니스 로직 계층)
+   │    ├── model (데이터 모델)
+   │    │    ├── User.kt  // 사용자 정보를 담는 데이터 모델 클래스
+   │    │    ├── Task.kt  // 할 일(Task) 정보를 담는 데이터 모델 클래스
+   │    │
+   │    ├── usecase (유즈케이스)
+   │         ├── GetTasksUseCase.kt  // 할 일 목록을 가져오는 비즈니스 로직을 담당하는 클래스
+   │         ├── LoginUserUseCase.kt  // 사용자 로그인 처리를 담당하는 클래스
+   │
+   ├── 📁 presentation (UI 및 화면 계층)
+   │    ├── feature (화면별 기능)
+   │    │    ├── login (로그인 화면)
+   │    │    │    ├── LoginFragment.kt  // 로그인 화면의 UI를 담당하는 Fragment 클래스
+   │    │    │    ├── LoginViewModel.kt  // 로그인 관련 로직을 관리하는 ViewModel 클래스
+   │    │    │
+   │    │    ├── home (홈 화면)
+   │    │         ├── HomeFragment.kt  // 홈 화면 UI를 담당하는 Fragment 클래스
+   │    │         ├── HomeViewModel.kt  // 홈 화면의 비즈니스 로직을 관리하는 ViewModel 클래스
+   │
+   ├── 📁 di (의존성 주입 계층)
+   │    ├── AppModule.kt  // 애플리케이션 전체에서 공유되는 의존성 주입 설정
+   │    ├── ViewModelModule.kt  // ViewModel 의존성을 관리하는 Hilt 모듈
+   │
+   ├── 📁 utils (유틸리티 및 공통 기능)
+   │    ├── DateFormatter.kt  // 날짜 형식을 변환하는 유틸리티 클래스
+   │    ├── StringExtensions.kt  // 문자열 관련 확장 함수 제공
+   │
+   ├── 📁 res (UI 및 기타 리소스)
+   │    ├── drawable (이미지 파일)
+   │    ├── layout (XML UI 파일)
+   │    ├── values (문자열 및 색상 설정)
+   │
+   ├── 📁 gradle (Gradle 빌드 시스템 관련 파일)
+   │    ├── gradle.properties  // 프로젝트의 전역 설정을 관리하는 파일
+   │    ├── settings.gradle  // 프로젝트의 모듈 설정을 정의하는 파일
+
+
+######################################################################
+네! **의존성 주입(DI)**을 올바르게 활용하려면 단계별 과정이 필요해요. 🚀  
+아래와 같은 순서로 진행하면 **Hilt를 통해 의존성을 설정하고 사용할 수 있어요.**  
+
+---
+
+### **📌 단계별 과정 정리**  
+
+✅ **1️⃣ Gradle에 의존성 추가**  
+   - `app/build.gradle`에 Hilt 관련 라이브러리 추가  
+   ```gradle
+   plugins {
+       id 'com.google.dagger.hilt.android'
+       id 'kotlin-kapt'
+   }
+
+   dependencies {
+       implementation "com.google.dagger:hilt-android:2.48"
+       kapt "com.google.dagger:hilt-compiler:2.48"
+   }
+   ```
+   - 이후 **Gradle Sync** 실행 (`Sync Project with Gradle Files`)  
+
+✅ **2️⃣ 의존성 객체를 모듈에 정의**  
+   - `di/AppModule.kt`에서 **Hilt 모듈을 생성**하여 객체 주입 가능하도록 설정  
+   ```kotlin
+   @Module
+   @InstallIn(SingletonComponent::class)
+   object AppModule {
+       @Provides
+       fun provideApiService(): ApiService {
+           return RetrofitInstance.create()
+       }
+   }
+   ```
+   - 이렇게 하면 **`ApiService` 객체가 필요할 때 자동으로 주입됨**  
+
+✅ **3️⃣ `@Inject` 키워드로 의존성 사용 (ViewModel 등에서 활용)**  
+   - Hilt를 사용하여 주입된 객체를 **ViewModel이나 Composable에서 활용 가능**  
+   ```kotlin
+   @HiltViewModel
+   class HomeViewModel @Inject constructor(
+       private val apiService: ApiService
+   ) : ViewModel() {
+       fun fetchData() {
+           // API 호출
+       }
+   }
+   ```
+   - 이렇게 하면 **`apiService`가 자동으로 주입되고 사용할 수 있어요.**  
+
+---
+
+### **🚀 결론**  
+**1️⃣ Gradle 설정 → 2️⃣ 모듈에서 정의 → 3️⃣ `@Inject`로 객체 사용**  
+이 순서대로 진행하면 **의존성 주입을 완벽하게 활용할 수 있어요!** 😊  
+
+혹시 추가적인 설정이나 오류가 발생하면 알려주세요! 🚀  
+
+혹시 추가적인 설정이나 오류가 발생하면 알려주세요! 🚀  
+
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+📂 프로젝트 루트 (Project Root)
+   ├── 📁 core (핵심 로직 및 공통 모듈)
+   │    ├── BaseViewModel.kt     --> 모든 ViewModel에서 상속하여 사용할 기본 기능 정의
+   │    ├── NetworkClient.kt     --> Retrofit을 활용한 네트워크 클라이언트 설정
+   │    ├── DependencyInjection.kt --> Hilt를 사용한 DI 설정
+   │
+   ├── 📁 data (데이터 관리 계층)
+   │    ├── repository
+   │    │    ├── UserRepository.kt   --> 사용자 데이터 관리
+   │    │    ├── TaskRepository.kt   --> 할 일(Task) 데이터 관리
+   │    │
+   │    ├── database (로컬 데이터)
+   │    │    ├── AppDatabase.kt      --> Room 데이터베이스 설정
+   │    │    ├── TaskDao.kt          --> DAO 인터페이스 (Task 데이터 조회 및 저장)
+   │    │
+   │    ├── api (네트워크 API)
+   │         ├── ApiService.kt       --> API 요청 인터페이스
+   │         ├── RetrofitInstance.kt --> Retrofit을 통한 네트워크 통신 설정
+   │
+   ├── 📁 domain (비즈니스 로직 계층)
+   │    ├── model
+   │    │    ├── User.kt            --> 사용자 데이터 모델
+   │    │    ├── Task.kt            --> 할 일 데이터 모델
+   │    │
+   │    ├── usecase
+   │         ├── GetTasksUseCase.kt  --> 할 일 목록을 불러오는 유즈케이스
+   │         ├── LoginUserUseCase.kt --> 사용자 로그인 처리 유즈케이스
+   │
+   ├── 📁 presentation (UI 및 화면 계층)
+   │    ├── feature (화면별 기능 분리)
+   │    │    ├── login
+   │    │    │    ├── LoginFragment.kt  --> 로그인 화면 UI 설정
+   │    │    │    ├── LoginViewModel.kt  --> 로그인 관련 로직 관리
+   │    │    │
+   │    │    ├── home
+   │    │         ├── HomeFragment.kt   --> 홈 화면 UI 설정
+   │    │         ├── HomeViewModel.kt  --> 홈 화면 데이터 관리
+   │
+   ├── 📁 di (의존성 주입 계층)
+   │    ├── AppModule.kt      --> 전역적인 의존성 정의 (Repository, API, Database 등)
+   │    ├── ViewModelModule.kt --> ViewModel을 주입하는 모듈 설정
+   │
+   ├── 📁 utils (유틸리티 및 공통 기능)
+   │    ├── DateFormatter.kt  --> 날짜 형식을 변환하는 유틸리티 클래스
+   │    ├── StringExtensions.kt --> 문자열 확장 함수 제공
+   │
+   ├── 📁 res (UI 및 기타 리소스)
+   │    ├── drawable (이미지 파일)    --> 앱에서 사용하는 아이콘 및 그래픽 리소스
+   │    ├── layout (XML UI 파일)     --> 앱의 UI를 구성하는 XML 레이아웃 파일들
+   │    ├── values (문자열 및 색상 설정) --> 문자열, 색상, 스타일 등 앱 설정
+   │
+   ├── 📁 gradle (Gradle 빌드 시스템 관련 파일)
+   │    ├── build.gradle (모듈별 설정)       --> 각 모듈의 Gradle 빌드 스크립트 설정
+   │    ├── gradle.properties (프로젝트 환경 변수)  --> 프로젝트의 전역 설정 관리
+   │    ├── settings.gradle (프로젝트 모듈 정의)   --> 프로젝트의 모듈 포함 설정
+   │
+   ├── 📁 assets (애플리케이션 리소스)
+   │    ├── fonts (앱 폰트)     --> 사용자 정의 폰트 파일 저장
+   │    ├── html (내장 HTML 파일)   --> 앱에서 사용할 HTML 파일들 저장
+   │
+   ├── 📁 libs (외부 라이브러리)
+   │    ├── third-party-library.jar --> 외부 라이브러리 추가 시 사용
+   │
+   ├── 📁 test (테스트 코드)
+   │    ├── unit (단위 테스트)     --> 비즈니스 로직 단위 테스트 관리
+   │    ├── ui (UI 테스트)      --> UI 기능 검증을 위한 테스트 코드
+   │
+   ├── 📁 build (컴파일된 APK 및 빌드 결과)
+   │    ├── outputs --> APK 빌드 후 결과 파일 저장
+
+
+############################################################################
+
+
+📂 프로젝트 루트 (Project Root)
+   ├── 📁 app (메인 애플리케이션 모듈)
+   │    ├── 📁 src
+   │    │    ├── main (앱의 주요 코드)
+   │    │    │    ├── java (코틀린/자바 소스 코드)
+   │    │    │    │    ├── com.example.myapp
+   │    │    │    │    │    ├── MainActivity.kt  --> 앱의 진입점 (메인 화면)
+   │    │    │    │    │    ├── AndroidManifest.xml  --> 앱 구성 및 권한 설정 파일
+   │    │    │    │    │    ├── 📁 presentation (UI 및 화면 계층)
+   │    │    │    │    │    │    ├── feature (화면별 기능)
+   │    │    │    │    │    │    │    ├── login (로그인 화면)
+   │    │    │    │    │    │    │    │    ├── LoginFragment.kt
+   │    │    │    │    │    │    │    │    ├── LoginViewModel.kt
+   │    │    │    │    │    │    │    ├── home (홈 화면)
+   │    │    │    │    │    │    │    │    ├── HomeFragment.kt
+   │    │    │    │    │    │    │    │    ├── HomeViewModel.kt
+   │
+   ├── 📁 core (핵심 로직 및 공통 모듈)  <-- `app`이 이를 포함하여 사용
+   ├── 📁 data (데이터 관리 계층)  <-- `app`이 데이터를 가져옴
+   ├── 📁 domain (비즈니스 로직 계층)  <-- `app`이 비즈니스 로직 실행
+   ├── 📁 di (의존성 주입 계층)  <-- `app`이 객체 주입을 설정
+   ├── 📁 res (UI 및 기타 리소스)
+   ├── 📁 gradle (Gradle 빌드 시스템 관련 파일)
+
+
+
+##################################################################################################
+
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*") // Android 관련 라이브러리 포함
+                includeGroupByRegex("com\\.google.*") // Google 관련 라이브러리 포함
+                includeGroupByRegex("androidx.*") // AndroidX 라이브러리 포함
+            }
+        }
+        mavenCentral() // 중앙 저장소 사용
+        gradlePluginPortal() // Gradle 플러그인 포털 사용
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) // 프로젝트별 저장소 사용 제한
+    repositories {
+        google() // Google 저장소 사용
+        mavenCentral() // 중앙 저장소 사용
+    }
+}
+
+rootProject.name = "Platform Samples"
+include(":app") // 메인 애플리케이션 모듈 포함
+
+include(":shared") // 공용 모듈 포함
+include(":samples:accessibility") // 접근성 샘플 포함
+include(":samples:camera:camera2") // Camera2 샘플 포함
+include(":samples:connectivity:audio") // 오디오 연결 샘플 포함
+include(":samples:connectivity:bluetooth:ble") // BLE 블루투스 샘플 포함
+include(":samples:connectivity:bluetooth:companion") // 블루투스 컴패니언 샘플 포함
+include(":samples:connectivity:callnotification") // 전화 알림 샘플 포함
+include(":samples:connectivity:telecom") // 통신 샘플 포함
+include(":samples:graphics:pdf") // PDF 그래픽 샘플 포함
+include(":samples:graphics:ultrahdr") // 울트라 HDR 샘플 포함
+include(":samples:location") // 위치 정보 샘플 포함
+include(":samples:media:ultrahdr") // 울트라 HDR 미디어 샘플 포함
+include(":samples:media:video") // 비디오 샘플 포함
+include(":samples:privacy:data") // 개인정보 보호 데이터 샘플 포함
+include(":samples:privacy:permissions") // 개인정보 보호 권한 샘플 포함
+include(":samples:privacy:transparency") // 개인정보 투명성 샘플 포함
+include(":samples:storage") // 저장소 샘플 포함
+include(":samples:user-interface:appwidgets") // 앱 위젯 샘플 포함
+include(":samples:user-interface:constraintlayout") // ConstraintLayout 샘플 포함
+include(":samples:user-interface:draganddrop") // 드래그 앤 드롭 샘플 포함
+include(":samples:user-interface:haptics") // 햅틱 UI 샘플 포함
+include(":samples:user-interface:picture-in-picture") // PIP 모드 샘플 포함
+include(":samples:user-interface:predictiveback") // Predictive Back 샘플 포함
+include(":samples:user-interface:quicksettings") // 빠른 설정 샘플 포함
+include(":samples:user-interface:share") // 공유 기능 샘플 포함
+include(":samples:user-interface:text") // 텍스트 UI 샘플 포함
+include(":samples:user-interface:window-insets") // 창 인세트 샘플 포함
+include(":samples:user-interface:windowmanager") // Window Manager 샘플 포함
+
+// 🚀 추가된 모듈: 서브 프로젝트에서 가져온 핵심 기능들
+include(":core") // 핵심 로직 및 공통 모듈
+include(":data") // 데이터 관리 계층
+include(":domain") // 비즈니스 로직 계층
+include(":presentation") // UI 및 화면 관련 계층
+include(":di") // 의존성 주입 모듈
+include(":utils") // 유틸리티 및 공통 기능
+
+// 각 서브 프로젝트 모듈의 실제 위치를 지정
+project(":core").projectDir = file("../SubProject/core")
+project(":data").projectDir = file("../SubProject/data")
+project(":domain").projectDir = file("../SubProject/domain")
+project(":presentation").projectDir = file("../SubProject/presentation")
+project(":di").projectDir = file("../SubProject/di")
+project(":utils").projectDir = file("../SubProject/utils")
+
+
+
+

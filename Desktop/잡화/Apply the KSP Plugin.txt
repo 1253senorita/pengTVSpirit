@@ -1,0 +1,90 @@
+Apply the KSP Plugin:
+In your module-level build.gradle.kts file, apply the plugin:
+
+plugins {
+    // Other plugins
+    alias(libs.plugins.ksp)
+}
+
+
+@@@@@@@@@@@@
+
+2
+
+Add KSP Processor Dependencies:
+Also in your module-level build.gradle.kts, in the dependencies block:
+
+
+dependencies {
+    // Other dependencies
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+}
+
+
+@@@@@@@@@@@@@@@@
+
+
+Complete Example (libs.versions.toml) Here's a more complete example of what your libs.versions.toml might look like with these KSP-related dependencies:
+
+
+
+toml
+toml
+[versions]
+ksp = "1.9.22-1.0.17"
+hilt = "2.51.1"
+room = "2.6.1"
+# ... other versions ...
+
+[plugins]
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+# ... other plugins ...
+
+[libraries]
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+# ... other libraries ...
+
+@@@@@@@@@@@@@@@@
+
+
+Complete Example (build.gradle.kts)
+
+
+plugins {
+    // Other plugins
+    alias(libs.plugins.ksp)
+}
+dependencies {
+    // Other dependencies
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
+}
+
+@@@@@@@@@@@
+다음은 영어로 주어진 내용을 해석한 것입니다:
+
+**단계**  
+1. `libs.versions.toml` 파일의 해당 섹션([versions], [plugins], [libraries])에 필요한 의존성을 추가하십시오.  
+2. `build.gradle.kts` 파일의 `plugins` 섹션에 플러그인을 추가하십시오.  
+3. `build.gradle.kts` 파일의 `dependencies` 섹션에 의존성을 추가하십시오.  
+
+**주요 요점**  
+- KSP 플러그인(`com.google.devtools.ksp`)은 프로젝트에 적용하는 플러그인입니다.  
+- KSP 프로세서(예: Hilt, Room)는 `ksp` 구성으로 사용하는 의존성입니다.  
+- 버전 카탈로그를 사용하면 이러한 요소를 중앙에서 간편하게 관리할 수 있습니다.  
+
+**마지막 정리**  
+이 명확한 설명이 도움이 되었길 바랍니다. 추가적으로 궁금한 점이 있다면 언제든 물어보세요!
+
+이해에 어려움이 있거나 추가적인 요청이 있다면 알려주세요! 😊
+Steps
+Add the dependencies in the file libs.versions.toml, in the corresponding sections: [versions], [plugins] and [libraries].
+Add the plugin in the file build.gradle.kts, in the section plugins.
+Add the dependencies in the file build.gradle.kts, in the section dependencies.
+Key Takeaways
+The KSP plugin (com.google.devtools.ksp) is a plugin you apply.
+KSP processors (like Hilt's, Room's) are dependencies that you use with the ksp configuration.
+Version catalogs make it very easy to manage these in one central location.
+I hope this comprehensive explanation is helpful! Let me know if you have any more questions.

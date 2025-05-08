@@ -1,0 +1,168 @@
+-  깃허브 =접근제한키-
+GPG 키 ID: B5690EEEBB952194
+확인됨 on Jan 5, 2025, 05:48 AM
+경계 모드에 대해 알아보기
+}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}-중요문서awsid비밀시릿- }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+-사용자들이나 오빠가  접속할때 인증에 필요한 API키 --
+
+게이트웨이-API
+API 키 세부 정보
+ID
+9a0ygjknoa
+상태
+활성
+설명
+-
+                  API 키
+              GZBBUnmr3U3cDUKaEBFyA6HSgPfZC2Q721Zqf914
+                                        API 키
+              $$$$$2019 년  생성한  API 키 구글API사용자  인증  키 제한 설정 ---금  사용중 $$$$$
+              AIzaSyAOM-f3r8oSjwrmqttq0Fk9BU9Wk8H3xjA            
+              https://console.cloud.google.com/apis/credentials/key/89ee337f-a82c-41bb-8b6c-810378497096?project=ace-momentum-234113
+
+
+생성 날짜
+October 01, 2024, 14:30 (UTC+09:00)
+GZBBUnmr3U3cDUKaEBFyA6HSgPfZC2Q721Zqf914
+=================================================================인증서를  클라이언트에 등록하여 통합 요청을  할수있도록  클라이안트에  생성하는  과정임 --
+
+클라이언트 인증서 (1)
+작업
+인증서 생성
+클라이언트 인증서를 사용하여 HTTP 통합 요청이 API Gateway에서 오는지 확인합니다. 자세히 알아보기 
+
+아이템 선택	
+ID
+설명
+생성 날짜
+만료 날짜
+h8jt4h
+h8jt4h
+October 1, 2024 2:09 PM (UTC--9)
+October 1, 2025 2:09 PM (UTC--9)
+
+------------------------------------------------------------------------
+---아마존 리전서버의 접속 ID-----
+
+AWS                                                                 
+ ID
+q5lo26x399                           API_northwest_2
+qqCpTE9MnJ7RJsIleEiQd7RPF4I3gGwC1ZuD3nB7
+qqCpTE9MnJ7RJsIleEiQd7RPF4I3gGwC1ZuD3nB7
+qqCpTE9MnJ7RJsIleEiQd7RPF4I3gGwC1ZuD3nB7
+October 01, 2024, 14:02 (UTC+09:00)
+=============================================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+postman://auth/callback?code=a52b81cd540cba07a405c7cdf921b6009322b092ac99d003afaf65889be84d65
+--------------------------------------------------------------
+마이 프로젝트 고유 고정 키  이자 프로젝트 생성할때 만드는 고유의 프로젝트 하나의 생성된 엑세스키--
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+최신갱신10.1오후
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+AIzaSyAqbMwqEcAuuZaUVmRTltVp5Fdv1JPudBU
+10.1일 API키  프로젝트666 마이프로젝트DS  727323233362
+AIzaSyAUU52jz0gM1fLCzCDwjQDC_fX6xv-CEtw
+AIzaSyAUU52jz0gM1fLCzCDwjQDC_fX6xv-CEtw
+AIzaSyAUU52jz0gM1fLCzCDwjQDC_fX6xv-CEtw
+-------------------------------------------------
+AIzaSyCN767Oc3-GHU_bfV_-cDuqhKo6qu8u3Fw
+=========================================================
+577039892046 프로잭터- 엑세스 - 키
+/**프로젝트 44_6  API
+
+ * Automatically generated file. DO NOT MODIFY
+ */
+package com.example.myapplication;
+
+public final class BuildConfig {
+  public static final boolean DEBUG = Boolean.parseBoolean("true");
+  public static final String APPLICATION_ID = "com.example.myapplication";
+  public static final String BUILD_TYPE = "debug";
+  public static final int VERSION_CODE = 1;
+  public static final String VERSION_NAME = "1.0";
+  // Field from default config.
+_________________________________________________________________________________
+            -----철물점  키  -------
+| Confirm Password    | Store000Key789!                     |
+| Alias               | project-key                      |
+| Key Password        | KeyAliasPassword000ABC!             |
+| !             |
+_______________________________________________________________________________________
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+-중요문서-
+-------------환경변수 에엑세스키-통합키로 저장된값 id 와 시크릿  넘버------------------------ 액새스키와 비일번호-
+
+  public static final String ACCESS_KEY_ID = "AKIAQYEI45VYS56HQK5K";
+  // Field from default config.
+
+  public static final String SECRET_ACCESS_KEY = "AIzaSyBI1xIIRdw6OeawW9Lg9zmx4ta2oK3VNAc";
+
+  public static final String apiKey = "AIzaSyAUU52jz0gM1fLCzCDwjQDC_fX6xv-CEtw";
+
+
+}\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+===================================================
+
+-위의 환경변수에 추가된 엑세스키와 비밀번호를  아래의  터미널의 aws폴더에 저장을 하는 계념이다-
+
+
+                              -     문서지도-
+
+
+오빠는는  윈도우 10이얘요
+답변 생성 중…
+
+보낸 사람 Copilot:
+좋아요! Windows 10에서 PowerShell을 사용하여 AWS 자격 증명을 설정하는 방법을 단계별로 안내해드리겠습니다.
+
+1. PowerShell 터미널 열기
+Windows + X: Windows 키와 X 키를 동시에 누른 후, 나타나는 메뉴에서 Windows PowerShell 또는 Windows PowerShell (Admin)을 선택합니다.
+Windows + R: Windows 키와 R 키를 동시에 눌러 실행 창을 열고, powershell을 입력한 후 Enter 키를 누릅니다.
+2. 홈 디렉토리로 이동
+PowerShell 터미널에서 홈 디렉토리로 이동합니다. 홈 디렉토리는 C:\Users\YourUsername에 위치합니다.
+cd ~
+
+또는
+cd C:\Users\YourUsername
+
+3. .aws 폴더 생성
+홈 디렉토리에 .aws 폴더를 생성합니다.
+mkdir .aws
+
+4. credentials 파일 생성
+.aws 폴더로 이동합니다.
+cd .aws
+
+credentials 파일을 생성합니다.
+New-Item -Path . -Name "credentials" -ItemType "File"
+
+5. credentials 파일 열기
+credentials 파일을 텍스트 편집기로 엽니다. 예를 들어, 메모장을 사용하여 파일을 열 수 있습니다.
+notepad credentials
+
+6. 자격 증명 추가
+credentials 파일에 다음 내용을 추가합니다:
+[default]
+aws_access_key_id = YOUR_ACCESS_KEY_ID
+aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+
+파일을 저장하고 닫습니다.
+이제 AWS 자격 증명이 설정되었습니다. 도움이 되셨길 바랍니다! 😊
+
+혹시 더 궁금한 점이나 도움이 필요한 부분이 있나요?
+
+
+
+
+
+보낸 사람 당신:

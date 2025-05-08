@@ -1,0 +1,31 @@
+name: Auto Assign and Label
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Auto-assign issue
+        uses: pozil/auto-assign-issue@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          assignees: 1253senorita, testUser1 # 여러명 지정
+          numOfAssignee: 2 # 할당자 명수를 여러명으로 지정
+
+
+
+
+
+
+
+
+
+https://github.com/socialTesk-bang/demo-repository/blob/main/.github/workflows/auto-assign.yml?enable_tip=true
+
+.github/workflows/auto-assign.yml

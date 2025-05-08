@@ -1,0 +1,8 @@
+ 489334723881-k5ghre65ml57j3u15ss2721tuasl2t2c.apps
+
+default_web_client_id
+
+<string name="default_web_client_id>489334723881-k5ghre65ml57j3u15ss2721tuasl2t2c.apps</string>
+
+<string name="default_web_client_id
+">489334723881-k5ghre65ml57j3u15ss2721tuasl2t2c.apps.googleusercontent.com</string>

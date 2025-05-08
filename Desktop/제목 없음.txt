@@ -1,0 +1,12 @@
+
+- ba390a2 (HEAD -> main, origin/main) Updated project files
+
+ba390a2
+ba390a2
+
+- 3b2dd79 Updated firebase-android-sdk submodule
+- 3b86337 Added firebase-android-sdk as a submodule
+- afedc50 Removed firebase-android-sdk from index
+- 595159b (load02, load01) 메인 브랜치 초기 설정 및 파일 수정
+- f0e50e9 (master) Initial commit PS C:\Users\55341\StudioProjects\Platform> git branch -a load01 load02
+- main master remotes/origin/main PS C:\Users\55341\StudioProjects\Platform> 잘했어요  짝짝짝

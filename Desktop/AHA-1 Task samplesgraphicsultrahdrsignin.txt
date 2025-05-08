@@ -1,0 +1,129 @@
+
+cd "C:\Users\55341\StudioProjects\Platform"
+cd "C:\Users\55341\StudioProjects\Platform"
+cd "C:\Users\55341\StudioProjects\Platform"
+cd "C:\Users\55341\StudioProjects\Platform"
+
+
+ 깃허브토큰TT        https://github.com/settings/personal-access-tokens/new
+
+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
+
+깃허브토큰TT        https://github.com/settings/personal-access-tokens/new
+
+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
+
+깃허브토큰TT        https://github.com/settings/personal-access-tokens/new
+
+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
+
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+  
+
+SSH     PUP키  
+
+
+PS C:\Users\55341\StudioProjects\Platform\firebase-android-sdk> ssh-keygen -t ed25519 -C "your_email@example.com"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (C:\Users\55341/.ssh/id_ed25519): cat ~/.ssh/id_ed25519.pub
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Passphrases do not match.  Try again.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Saving key "cat ~/.ssh/id_ed25519.pub" failed: No such file or directory
+PS C:\Users\55341\StudioProjects\Platform\firebase-android-sdk> ssh-keygen -t ed25519 -C "5534196@gmail.com"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (C:\Users\55341/.ssh/id_ed25519):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in C:\Users\55341/.ssh/id_ed25519
+Your public key has been saved in C:\Users\55341/.ssh/id_ed25519.pub
+The key fingerprint is:
+SHA256:wmQpxMqaEJKoAfchJ2pKvd6kie/yAfJMWuiGzPd+P5E 5534196@gmail.com
+The key's randomart image is:
++--[ED25519 256]--+
+|+.+.+            |
+|*o.*.. .         |
+|+* oo +          |
+|*.o .=           |
+|=+o. .o S .      |
+|O*+ =  . E       |
+|o*o* .    .      |
+|..o o  . .       |
+|  ++.o. ...      |
++----[SHA256]-----+
+PS C:\Users\55341\StudioProjects\Platform\firebase-android-sdk>
+
+
+
+
+> Task :samples:graphics:ultrahdr:signingReport
+Variant: debugAndroidTest
+Config: debug
+Store: C:\Users\55341\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 6E:D5:22:B7:F1:B3:E1:77:B0:59:0C:B3:89:E9:EC:A6
+SHA1: 68:69:91:AB:87:80:1F:61:6F:3F:DC:24:EA:9D:44:71:BA:8F:28:F6
+SHA-256: B9:7A:21:46:59:64:F1:CF:29:31:60:E6:6B:74:9C:27:36:2D:9E:9E:FD:25:ED:B2:78:32:9D:06:44:18:05:ED
+Valid until: 2055년 2월 24일 수요일
+----------
+
+> Task :app:signingReport
+Variant: debug
+Config: debug
+Store: C:\Users\55341\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 6E:D5:22:B7:F1:B3:E1:77:B0:59:0C:B3:89:E9:EC:A6
+SHA1: 68:69:91:AB:87:80:1F:61:6F:3F:DC:24:EA:9D:44:71:BA:8F:28:F6
+SHA-256: B9:7A:21:46:59:64:F1:CF:29:31:60:E6:6B:74:9C:27:36:2D:9E:9E:FD:25:ED:B2:78:32:9D:06:44:18:05:ED
+Valid until: 2055년 2월 24일 수요일
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+좋아요! 🚀 **SSH 키가 정상적으로 생성되었습니다.**  
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpFhEKCNun3rKWKZqkEb+biPPrwB0jHDJUcUsO62+9g 5534196@gmail.com
+✅ **이제 해야 할 작업:*
+
+  OpenPGP 인증서를 생성했습니다.
+  새 인증서의 지문: 74AA BEAB 887E E9BA 2B75  3BFC 2721 AE2B C579 5859
+
+https://github.com/settings/keys
+1️⃣ **공개 키(`id_ed25519.pub`)를 GitHub에 등록**  
+   ```
+   cat ~/.ssh/id_ed25519.pub
+   ```
+)))))))))))))))))))))))))))))))))))))))))))))
+
+PS C:\Users\55341\StudioProjects\Platform\firebase-android-sdk> cat ~/.ssh/id_ed25519.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJpFhEKCNun3rKWKZqkEb+biPPrwB0jHDJUcUsO62+9g 5534196@gmail.com
+PS C:\Users\55341\StudioProjects\Platform\firebase-android-sdk>
+
+))))))))))))))))))))))))))))))))))))))))))
+   - 이 명령어를 실행하면 **공개 키 내용이 출력됨**  
+   - 복사 후 **GitHub → Settings → SSH and GPG keys → New SSH Key**에서 추가  
+
+2️⃣ **SSH 연결 테스트**  
+   ```
+   ssh -T git@github.com
+   ```
+   - `"Hi <GitHub 사용자명>! You've successfully authenticated"` 메시지가 나오면 정상적으로 인증됨  
+
+3️⃣ **GitHub 원격 저장소 URL 변경**  
+   ```
+   git remote set-url origin git@github.com:firebase/firebase-android-sdk.git
+   ```
+   - 기존 HTTPS 방식에서 **SSH 방식으로 변경**  
+
+4️⃣ **다시 푸시 시도**  
+   ```
+   git push origin load01
+   git push origin load02
+   ```
+   - 정상적으로 설정되면 **푸시가 성공적으로 진행됨**  
+
+📌 **즉, 공개 키를 GitHub에 등록한 후 SSH 연결을 테스트하고 원격 저장소 설정을 변경하면 됩니다.**  
+혹시 추가적인 확인이 필요하면 언제든지 알려주세요! 😊🚀
+

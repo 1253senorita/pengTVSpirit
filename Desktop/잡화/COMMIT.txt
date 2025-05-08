@@ -1,0 +1,54 @@
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang> git branch
+  load01
+* main
+  master
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang>
+
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+branch 'main' set up to track 'origin/main'.
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang> git log
+commit adad0c1a2df3be2ea8a6d5865952ffcbcd1e110a (HEAD -> main, origin/main)
+Author: 1253senorita <136488814+1253senorita@users.noreply.github.com>
+Date:   Sun Apr 20 00:45:07 2025 +0900
+
+    Initial commit
+
+commit a760b470c8a27a5a5e400e8a9c62b52bfce945a2
+Author: 1253senorita <136488814+1253senorita@users.noreply.github.com>
+Date:   Thu Apr 17 04:18:15 2025 +0900
+
+    커밋 메시지 작성 예: Gradle 설정 수정 및 문제 해결
+
+commit 96a11249503f652491ceb1c21835725e9c48f64b
+Author: 1253senorita <136488814+1253senorita@users.noreply.github.com>
+Date:   Wed Apr 16 22:52:46 2025 +0900
+
+    Initial commit for reset
+
+commit faa7dbf8653cd8047913278074535eb22b8d5adf
+Author: 1253senorita <136488814+1253senorita@users.noreply.github.com>
+Date:   Wed Apr 16 23:21:46 2025 +0900
+
+    Initial commit
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+    Initial commit
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang> git log --oneline
+adad0c1 (HEAD -> main, origin/main) Initial commit
+a760b47 커밋 메시지 작성 예: Gradle 설정 수정 및 문제 해결
+96a1124 Initial commit for reset
+faa7dbf Initial commit
+PS C:\Users\55341\StudioProjects\PreviewactivytyBangBang>
+

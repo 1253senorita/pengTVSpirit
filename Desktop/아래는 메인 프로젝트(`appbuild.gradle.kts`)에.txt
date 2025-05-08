@@ -1,0 +1,16 @@
+아래는 **메인 프로젝트(`app/build.gradle.kts`)에 추가된 의존성과**  
+**서브 프로젝트(`settings.gradle.kts`)에 추가된 모듈 및 설정**을 비교한 표입니다:
+
+| **구분**       | **메인 프로젝트 (app/build.gradle.kts)**       | **서브 프로젝트 (settings.gradle.kts)** |
+|---------------|---------------------------------|----------------------------------|
+| **모듈 포함** | `implementation(project(":core"))`<br>`implementation(project(":data"))`<br>`implementation(project(":domain"))`<br>`implementation(project(":presentation"))`<br>`implementation(project(":di"))`<br>`implementation(project(":utils"))` | `include(":core", ":data", ":domain", ":presentation", ":di", ":utils")` |
+| **경로 지정** | - | `project(":core").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/core")`<br>`project(":data").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/data")`<br>`project(":domain").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/domain")`<br>`project(":presentation").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/presentation")`<br>`project(":di").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/di")`<br>`project(":utils").projectDir = file("C:/Users/55341/StudioProjects/Architecture/SubProject/utils")` |
+| **기능 역할** | 각 모듈을 앱이 의존성으로 포함하여 빌드 가능하도록 설정 | 각 모듈의 존재를 Gradle에 알리고 정확한 폴더 위치를 지정 |
+| **Gradle 빌드 적용** | `dependencies` 블록에서 서브 프로젝트를 참조 | 프로젝트가 빌드될 때 모든 서브 프로젝트를 포함 |
+
+📌 **이제 앱과 서브 프로젝트가 연결되었는지 Gradle 빌드를 실행하여 확인하세요:**  
+```sh
+./gradlew clean
+./gradlew build --warning-mode all
+```
+이 구성이 올바르면 프로젝트가 정상적으로 빌드될 것입니다! 🚀 혹시 추가적인 수정이 필요하면 알려 주세요. 🔥

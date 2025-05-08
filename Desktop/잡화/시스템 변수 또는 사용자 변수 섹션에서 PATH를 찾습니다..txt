@@ -1,0 +1,2 @@
+"시스템 변수" 또는 "사용자 변수" 섹션에서 PATH를 찾습니다.
+C:\Users\55341\AppData\Roaming\npm

@@ -1,0 +1,11 @@
+=== Your Firebase project is ready! ===
+
+Project information:
+   - Project ID: gen-lang-client-0790332864
+   - Project Name: Generative Language Client
+
+Firebase console is available at
+https://console.firebase.google.com/project/gen-lang-client-0790332864/overview
+i  Using project gen-lang-client-0790332864 (Generative Language Client)
+
+=== Firestore Setup

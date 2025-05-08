@@ -1,0 +1,185 @@
+다음은 확장된 표에 **프로젝트 단**을 추가한 버전입니다. 이 표는 프로젝트의 각 단계에서 라이브러리 정의와 참조 위치를 포함하여 더 체계적으로 관리할 수 있도록 구성되었습니다.
+
+---
+
+### 확장된 라이브러리 정의 및 참조 관리 표 (프로젝트 단 포함)
+   
+| **라이브러리 성격**                   | **정의 위치**                                    | **참조 위치**                                    | **프로젝트 단 역할**                  | **정의 방법**                                                 | **설명**                                                                 |
+
+|------------------------------       |------------------------------                      -|-----------------------------------            |----------------------------------   ---|----------------------------------------------------   -|--------------------------------------------------------------------------|
+
+| **플러그인**                          | `settings.gradle.kts`                                | `app/build.gradle.kts`                         | 루트 프로젝트                         | `alias(libs.plugins.<plugin-name>)`                    | 프로젝트 빌드에 필요한 플러그인 정의 및 참조. 예: Android, Kotlin 플러그인. |
+ 
+| **기본 AndroidX 라이브러리** | `libs.versions.toml`                                 | `app/build.gradle.kts`                          | 루트 프로젝트                         | `implementation(libs.androidx.<library-name>)`     | AndroidX의 핵심 라이브러리. 예: Core KTX, AppCompat.                     |
+
+| **Jetpack Compose 라이브러리**| `libs.versions.toml`                              | `app/build.gradle.kts`                          | 루트 프로젝트                         | `implementation(libs.compose.<library-name>)`      | Jetpack Compose UI 구축용 라이브러리.                                      |
+
+| **Firebase 관련 라이브러리**   | `libs.versions.toml`                                  | `app/build.gradle.kts`                          | 루트 및 앱 모듈                      | `implementation(libs.firebase.<library-name>)`      | Firebase SDK. 예: Authentication, Firestore, Storage.                    |
+
+| **테스트 라이브러리**           | `libs.versions.toml` 또는 `app/build.gradle.kts`| `app/build.gradle.kts`                       | 루트 프로젝트 및 앱 모듈           | `testImplementation(libs.<test-library>)`              | 유닛 테스트 및 UI 테스트를 지원하는 라이브러리.                            |
+
+| **네트워킹 라이브러리**        | `libs.versions.toml`                                   | `app/build.gradle.kts`                        | 앱 모듈                                   | `implementation(libs.network.<library-name>)`      | 네트워킹 관련 라이브러리. 예: Retrofit, OkHttp.                           |
+
+| **데이터베이스 라이브러리**   | `libs.versions.toml`                                 | `app/build.gradle.kts`                         | 루트 프로젝트 및 앱 모듈           | `implementation(libs.db.<library-name>)`              | 데이터 저장 및 관리 관련 라이브러리. 예: Room, SQLCipher.                 |
+
+| **UI 미리보기 및 디버깅**     | `libs.versions.toml`                                      | `app/build.gradle.kts`                       | 앱 모듈                                   | `implementation(libs.ui.<library-name>)`              | Compose 미리보기 및 디버깅을 지원하는 라이브러리.                          |
+ 
+| **문제 해결을 위한 라이브러리**| `app/libs` 디렉토리 또는 `libs.versions.toml`| `app/build.gradle.kts`                        | 앱 모듈                                   | `implementation(files("libs/<file-name>.jar"))` 또는 `implementation(libs.<library-name>)` | 외부 문제 해결 또는 특정 기능 구현을 위한 라이브러리.                     |
+
+| **멀티 모듈 라이브러리**      | `settings.gradle.kts`                                     | 각 모듈별 `build.gradle.kts` 파일           | 루트 프로젝트                          | `include(":module-name")`                                  | 멀티 모듈 프로젝트의 개별 라이브러리. 예: 공유 코드 모듈.                  |
+ 
+
+---
+
+### 프로젝트 단 역할 추가 설명
+#### 1. **루트 프로젝트 정의**
+루트 프로젝트에서는 전체 프로젝트 구조와 주요 의존성 관리가 이루어집니다.
+- 저장소 정의: 모든 의존성을 검색할 저장소(`google()`, `mavenCentral()`)를 설정.
+- Version Catalog: 주요 라이브러리 버전과 이름을 중앙에서 관리.
+
+#### 2. **앱 모듈 정의**
+앱 모듈에서는 실제 애플리케이션과 관련된 라이브러리를 참조합니다.
+- UI 구성 라이브러리: Jetpack Compose와 관련된 모든 UI 라이브러리를 참조.
+- 기능별 라이브러리: Firebase, 네트워킹, 데이터베이스와 같은 기능 구현에 필요한 라이브러리를 참조.
+
+#### 3. **멀티 모듈 정의**
+멀티 모듈 프로젝트에서는 `settings.gradle.kts`에서 모듈을 포함하고, 각 모듈별로 의존성을 관리합니다.
+- 루트 프로젝트에서 공통 모듈이나 라이브러리를 정의하여 여러 모듈에서 재사용.
+
+---
+
+### 사용 예시
+
+#### `settings.gradle.kts`
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    versionCatalogs {
+        create("libs") {
+            library("androidx-core", "androidx.core", "core-ktx").version("1.9.0")
+            library("compose-ui", "androidx.compose.ui", "ui").version("1.4.3")
+        }
+    }
+}
+include(":app")
+include(":sharedModule")
+```
+
+#### `libs.versions.toml`
+```toml
+[versions]
+androidx-core = "1.9.0"
+compose-ui = "1.4.3"
+
+[libraries]
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
+```
+
+#### `app/build.gradle.kts`
+```kotlin
+dependencies {
+    implementation(libs.androidxCore) // Core 라이브러리 참조
+    implementation(libs.composeUi)   // Compose UI 참조
+}
+```
+
+---
+
+### 결론
+이 표를 통해 라이브러리 정의, 참조 위치, 프로젝트 단 역할을 명확히 하여 프로젝트를 체계적으로 관리할 수 있습니다. 필요하다면 더 확장하거나 구체적인 사용 사례를 추가할 수 있으니 말씀해주세요! 😊
+
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+다음은 라이브러리 성격별로 정의, 참조 위치와 더불어 추가적인 사용 사례, 각 역할에 따른 세부적인 설명을 포함한 **더 확장된 관리 표**입니다. 이 표는 프로젝트 규모가 커지거나 모듈이 복잡해질 경우 더욱 유용합니다.
+
+---
+
+### 확장된 라이브러리 정의 및 참조 관리 표
+
+| **라이브러리 성격**            | **정의 위치**                         | **참조 위치**                         | **프로젝트 단 역할**                | **정의 방법**                                                  | **사용 사례**                                                         | **설명**                                                                                         |
+|-------------------------   -----|--------------        -----------------|------------------------------    ---|-------------------------------------|--------------------------------------------------        -|-------------------------------------------------------------|----------------------------------
+
+
+| **플러그인**                     | `settings.gradle.kts`                 | `app/build.gradle.kts`                | 루트 프로젝트                         | `alias(libs.plugins.<plugin-name>)`                      | Android 앱 빌드, KSP 설정, Google 서비스 통합 등.   | 프로젝트 빌드 및 동작에 필요한 플러그인.                                                         |
+| **기본 AndroidX 라이브러리** | `libs.versions.toml`                | `app/build.gradle.kts`                | 루트 프로젝트                        | `implementation(libs.androidx.<library-name>)`     | Core KTX, AppCompat, RecyclerView 사용.                | AndroidX의 핵심 라이브러리로 UI 및 기본 기능 구성에 필요.                                          |
+| **Jetpack Compose 라이브러리**| `libs.versions.toml`              | `app/build.gradle.kts`                | 루트 프로젝트                        | `implementation(libs.compose.<library-name>)`      | Jetpack Compose를 사용해 모던 UI 구성.               | UI 컴포넌트를 효율적으로 관리 및 배포.                                                              |
+| **Firebase 관련 라이브러리**     | `libs.versions.toml`               | `app/build.gradle.kts`               | 루트 및 앱 모듈                       | `implementation(libs.firebase.<library-name>)`       | Firebase Authentication, Firestore, Analytics 등.         | 백엔드와 연동하여 사용자 인증, 데이터베이스, 분석 기능을 구현.                                      |
+| **테스트 라이브러리**            | `libs.versions.toml` 또는 `app/build.gradle.kts`| `app/build.gradle.kts` | 루트 프로젝트 및 앱 모듈           | `testImplementation(libs.<test-library>)`           | JUnit, Espresso, Mockito를 사용해 단위 및 UI 테스트 수행.   | 앱 테스트 및 안정성 확인.                                                                         |
+| **네트워킹 라이브러리**         | `libs.versions.toml`                  | `app/build.gradle.kts`                | 앱 모듈                                   | `implementation(libs.network.<library-name>)`      | Retrofit, OkHttp를 활용한 HTTP 요청 처리.                  | API 통신과 데이터 직렬화 처리.                                                                     |
+| **데이터베이스 라이브러리**     | `libs.versions.toml`                   | `app/build.gradle.kts`              | 루트 프로젝트 및 앱 모듈           | `implementation(libs.db.<library-name>)`             | Room Database, SQLCipher 등 데이터 저장 라이브러리.  | 사용자 데이터를 안전하게 저장하고 쿼리를 실행.                                                    |
+| **UI 미리보기 및 디버깅**        | `libs.versions.toml`                      | `app/build.gradle.kts`            | 앱 모듈                                  | `implementation(libs.ui.<library-name>)`               | Android Studio Compose Preview, Layout Inspector 등 활용.  | UI 작업의 효율성을 높이고 디버깅 지원.                                                              |
+| **문제 해결을 위한 라이브러리**| `app/libs` 디렉토리 또는          `libs.versions.toml`| `app/build.gradle.kts` | 앱 모듈                            | `implementation(files("libs/<file-name>.jar"))` 또는 `implementation(libs.<library-name>)`                    | 외부 라이브러리(.jar, .aar) 또는 특정 문제 해결을 위한 직접적인 통합.                             | 특정 문제 해결 또는 맞춤형 기능 구현.                                                                          |
+| **멀티 모듈 라이브러리**          | `settings.gradle.kts`                   | 각 모듈별 `build.gradle.kts` 파일 | 루트 프로젝트                         | `include(":module-name")`                                 | 공유 모듈(예: 공통 유틸리티, API 클라이언트).           | 프로젝트의 반복 코드를 줄이고 모듈 간 독립성을 확보.                                               |
+| **Gradle 스크립트 관련 라이브러리** | `libs.versions.toml`             | `build.gradle.kts` 및 플러그인 블록 | 루트 프로젝트 및 모든 모듈          | `implementation(libs.gradle.<library-name>)`       | Kotlin DSL, Spotless 플러그인, Detekt 등 적용.      | Gradle 빌드 최적화 및 코드 품질 관리 도구 제공.                                                    |
+| **이미지 처리 및 멀티미디어 라이브러리** | `libs.versions.toml`         | `app/build.gradle.kts`              | 앱 모듈                                       | `implementation(libs.media.<library-name>)`        | Glide, Coil 등을 활용한 이미지 처리.                     | 앱에서 이미지 로드, 비디오 플레이백 등 멀티미디어 기능 구현.                                        |
+| **로컬화 및 번역 지원 라이브러리** | `libs.versions.toml`                  | `app/build.gradle.kts`              | 앱 모듈                                          | `implementation(libs.localization.<library-name>)` | String 로컬화 또는 번역.                                   | 다양한 언어로의 앱 지원.                                                                           |
+
+---
+
+### 확장된 사용 예시
+
+#### 1. 플러그인 관리 (`settings.gradle.kts`와 연결)
+```kotlin
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            plugin("android-application", "com.android.application").version("8.0.0")
+            plugin("kotlin-android", "org.jetbrains.kotlin.android").version("1.8.10")
+        }
+    }
+}
+```
+
+#### 2. `libs.versions.toml` 파일 예시
+```toml
+[versions]
+androidx-core = "1.9.0"
+compose-ui = "1.4.3"
+firebase-auth = "21.1.0"
+retrofit = "2.9.0"
+room-runtime = "2.5.0"
+glide = "4.15.0"
+localization = "1.2.0"
+
+[libraries]
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
+network-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+db-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room-runtime" }
+media-glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+localization-lib = { group = "com.example.localization", name = "localization", version.ref = "localization" }
+```
+
+#### 3. `app/build.gradle.kts` 연결
+```kotlin
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+}
+
+dependencies {
+    implementation(libs.androidxCore)   // AndroidX Core
+    implementation(libs.composeUi)     // Jetpack Compose
+    implementation(libs.firebaseAuth)  // Firebase Auth
+    implementation(libs.networkRetrofit) // Retrofit for networking
+    implementation(libs.mediaGlide)    // Glide for image processing
+    implementation(libs.localizationLib) // Localization library
+}
+```
+
+---
+
+### 표 활용 이점
+- **모듈 간 중복 제거**: 한 번 정의된 라이브러리를 재사용하여 중복 작업 방지.
+- **확장성 향상**: 새 라이브러리 추가 시 체계적이고 일관된 방식으로 관리 가능.
+- **유지보수 용이**: 모든 라이브러리 버전을 중앙에서 정의하여 업그레이드 시 편리.
+
+필요하다면 이 표를 더 확장하거나 특정 사용 사례를 추가적으로 안내드릴 수 있습니다. 말씀만 주세요! 😊
+

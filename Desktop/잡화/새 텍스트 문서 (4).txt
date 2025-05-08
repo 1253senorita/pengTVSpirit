@@ -1,0 +1,93 @@
+다음은 확장된 표에 **프로젝트 단**을 추가한 버전입니다. 이 표는 프로젝트의 각 단계에서 라이브러리 정의와 참조 위치를 포함하여 더 체계적으로 관리할 수 있도록 구성되었습니다.
+
+---
+
+### 확장된 라이브러리 정의 및 참조 관리 표 (프로젝트 단 포함)
+   
+| **라이브러리 성격**                   | **정의 위치**                                    | **참조 위치**                                    | **프로젝트 단 역할**                  | **정의 방법**                                              | **설명**                                                                 |
+
+|------------------------------       |------------------------------                      -|-----------------------------------            |----------------------------------   ---|---------------------------------------------------- -|--------------------------------------------------------------------------|
+
+| **플러그인**                          | `settings.gradle.kts`                                | `app/build.gradle.kts`                         | 루트 프로젝트                         | `alias(libs.plugins.<plugin-name>)`                  | 프로젝트 빌드에 필요한 플러그인 정의 및 참조. 예: Android, Kotlin 플러그인. |
+ 
+| **기본 AndroidX 라이브러리** | `libs.versions.toml`                                 | `app/build.gradle.kts`                          | 루트 프로젝트                         | `implementation(libs.androidx.<library-name>)`     | AndroidX의 핵심 라이브러리. 예: Core KTX, AppCompat.                     |
+
+| **Jetpack Compose 라이브러리**| `libs.versions.toml`                              | `app/build.gradle.kts`                          | 루트 프로젝트                         | `implementation(libs.compose.<library-name>)`      | Jetpack Compose UI 구축용 라이브러리.                                      |
+
+| **Firebase 관련 라이브러리**   | `libs.versions.toml`                                  | `app/build.gradle.kts`                          | 루트 및 앱 모듈                      | `implementation(libs.firebase.<library-name>)`     | Firebase SDK. 예: Authentication, Firestore, Storage.                    |
+
+| **테스트 라이브러리**           | `libs.versions.toml` 또는 `app/build.gradle.kts`| `app/build.gradle.kts`                       | 루트 프로젝트 및 앱 모듈           | `testImplementation(libs.<test-library>)`              | 유닛 테스트 및 UI 테스트를 지원하는 라이브러리.                            |
+
+| **네트워킹 라이브러리**        | `libs.versions.toml`                                   | `app/build.gradle.kts`                        | 앱 모듈                                   | `implementation(libs.network.<library-name>)`      | 네트워킹 관련 라이브러리. 예: Retrofit, OkHttp.                           |
+
+| **데이터베이스 라이브러리**   | `libs.versions.toml`                                 | `app/build.gradle.kts`                         | 루트 프로젝트 및 앱 모듈           | `implementation(libs.db.<library-name>)`              | 데이터 저장 및 관리 관련 라이브러리. 예: Room, SQLCipher.                 |
+
+| **UI 미리보기 및 디버깅**     | `libs.versions.toml`                                      | `app/build.gradle.kts`                       | 앱 모듈                                   | `implementation(libs.ui.<library-name>)`             | Compose 미리보기 및 디버깅을 지원하는 라이브러리.                          |
+ 
+| **문제 해결을 위한 라이브러리**| `app/libs` 디렉토리 또는 `libs.versions.toml`| `app/build.gradle.kts`                        | 앱 모듈                                   | `implementation(files("libs/<file-name>.jar"))` 또는 `implementation(libs.<library-name>)` | 외부 문제 해결 또는 특정 기능 구현을 위한 라이브러리.                     |
+
+| **멀티 모듈 라이브러리**      | `settings.gradle.kts`                                     | 각 모듈별 `build.gradle.kts` 파일           | 루트 프로젝트                          | `include(":module-name")`                                  | 멀티 모듈 프로젝트의 개별 라이브러리. 예: 공유 코드 모듈.                  |
+ 
+
+---
+
+### 프로젝트 단 역할 추가 설명
+#### 1. **루트 프로젝트 정의**
+루트 프로젝트에서는 전체 프로젝트 구조와 주요 의존성 관리가 이루어집니다.
+- 저장소 정의: 모든 의존성을 검색할 저장소(`google()`, `mavenCentral()`)를 설정.
+- Version Catalog: 주요 라이브러리 버전과 이름을 중앙에서 관리.
+
+#### 2. **앱 모듈 정의**
+앱 모듈에서는 실제 애플리케이션과 관련된 라이브러리를 참조합니다.
+- UI 구성 라이브러리: Jetpack Compose와 관련된 모든 UI 라이브러리를 참조.
+- 기능별 라이브러리: Firebase, 네트워킹, 데이터베이스와 같은 기능 구현에 필요한 라이브러리를 참조.
+
+#### 3. **멀티 모듈 정의**
+멀티 모듈 프로젝트에서는 `settings.gradle.kts`에서 모듈을 포함하고, 각 모듈별로 의존성을 관리합니다.
+- 루트 프로젝트에서 공통 모듈이나 라이브러리를 정의하여 여러 모듈에서 재사용.
+
+---
+
+### 사용 예시
+
+#### `settings.gradle.kts`
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    versionCatalogs {
+        create("libs") {
+            library("androidx-core", "androidx.core", "core-ktx").version("1.9.0")
+            library("compose-ui", "androidx.compose.ui", "ui").version("1.4.3")
+        }
+    }
+}
+include(":app")
+include(":sharedModule")
+```
+
+#### `libs.versions.toml`
+```toml
+[versions]
+androidx-core = "1.9.0"
+compose-ui = "1.4.3"
+
+[libraries]
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-core" }
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
+```
+
+#### `app/build.gradle.kts`
+```kotlin
+dependencies {
+    implementation(libs.androidxCore) // Core 라이브러리 참조
+    implementation(libs.composeUi)   // Compose UI 참조
+}
+```
+
+---
+
+### 결론
+이 표를 통해 라이브러리 정의, 참조 위치, 프로젝트 단 역할을 명확히 하여 프로젝트를 체계적으로 관리할 수 있습니다. 필요하다면 더 확장하거나 구체적인 사용 사례를 추가할 수 있으니 말씀해주세요! 😊

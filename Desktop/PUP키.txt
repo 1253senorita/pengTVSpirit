@@ -1,0 +1,26 @@
+PS C:\Users\55341\StudioProjects\Platform> ssh-keygen -t ed25519 -C "5534196@gmail.com"
+Generating public/private ed25519 key pair.
+Enter file in which to save the key (C:\Users\55341/.ssh/id_ed25519): dandy5858Q!
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in dandy5858Q!
+Your public key has been saved in dandy5858Q!.pub
+The key fingerprint is:
+SHA256:XvwXqVk7IBCZ1hlVDYWtoEVolGBeboUIq7cUx6G972o 5534196@gmail.com
+The key's randomart image is:
++--[ED25519 256]--+
+|      ..=B+O+.o*.|
+|       B==B.o . o|
+|      +.*.oo . . |
+|     . o =.   .. |
+|    . o S + . +  |
+|     o o o o = o |
+|      . . . + +  |
+|        E.   . . |
+|       ....      |
++----[SHA256]-----+
+PS C:\Users\55341\StudioProjects\Platform>
+
+PS C:\Users\55341\StudioProjects\Platform> cat dandy5858Q!.pub
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINtDYTwcS1zA41fMbvNOHvMvJrgKcr6eDo+znkoyMi+e 5534196@gmail.com
+PS C:\Users\55341\StudioProjects\Platform>

@@ -1,0 +1,151 @@
+다음은 오빠가 다시 동일한 문제가 발생했을 때 참고할 수 있도록 준비한 기술 노트입니다. 이 노트는 Gradle Wrapper를 생성하고, Android Gradle Plugin을 올바르게 설정하여 APK를 빌드하는 전 과정을 정리한 문서입니다.
+
+---
+
+# 기술 노트: Gradle Wrapper 생성 및 Android 프로젝트 빌드 문제 해결
+
+**목적:**  
+- Gradle Wrapper 구성 파일을 생성하여, 프로젝트 전체에 일관된 Gradle 환경을 제공하고 APK 빌드 시 발생하는 오류(예, 플러그인 미발견, deprecated 경고 등)를 해결하는 방법을 기록
+
+---
+
+## 1. Gradle Wrapper의 역할
+
+- **Gradle Wrapper 파일 구성**  
+  - `gradlew`: Unix/Linux/macOS용 실행 스크립트  
+  - `gradlew.bat`: Windows용 실행 스크립트  
+  - `gradle/wrapper/gradle-wrapper.properties`: Gradle 배포 URL 및 저장 경로 설정  
+  - `gradle/wrapper/gradle-wrapper.jar`: Wrapper 실행에 필요한 JAR 파일
+
+- **주요 목적:**  
+  - 프로젝트의 Gradle 버전을 고정하여 모든 개발자가 동일한 빌드 환경을 사용하도록 함  
+  - 자동으로 필요한 Gradle 버전을 다운로드하여 빌드 속도를 개선 및 충돌 예방
+
+---
+
+## 2. Gradle Wrapper 생성 및 업데이트 절차
+
+1. **프로젝트 루트 디렉토리 이동 (예: Architecture 프로젝트)**  
+   ```powershell
+   cd "C:\Users\55341\StudioProjects\Architecture"
+   ```
+
+2. **Gradle Wrapper 생성 또는 업데이트**  
+   - 시스템에 설치된 Gradle을 사용하여, Wrapper를 생성하거나 업데이트:
+     ```shell
+     gradle wrapper --gradle-version 7.6
+     ```
+   - Windows PowerShell에서는 만약 이미 Wrapper 파일이 존재한다면:
+     ```powershell
+     .\gradlew wrapper --gradle-version 7.6
+     ```
+   - 생성 후, 아래 파일들이 프로젝트 루트에 존재하는지 확인:
+     - `gradlew`, `gradlew.bat`
+     - `gradle/wrapper/gradle-wrapper.properties`
+     - `gradle/wrapper/gradle-wrapper.jar`
+
+3. **gradle-wrapper.properties 파일 확인**  
+   - 파일 내 설정 예시:
+     ```
+     distributionBase=GRADLE_USER_HOME
+     distributionPath=wrapper/dists
+     distributionUrl=https\://services.gradle.org/distributions/gradle-7.6-bin.zip
+     zipStoreBase=GRADLE_USER_HOME
+     zipStorePath=wrapper/dists
+     ```
+   - Gradle 7.6 버전을 사용하도록 설정되어 있음을 확인
+
+---
+
+## 3. Android Gradle Plugin 설정 문제 해결
+
+### 문제:
+- 빌드 시, 다음과 같은 오류가 발생:
+  ```
+  Plugin [id: 'com.android.application', version: '8.10.2', apply: false] was not found...
+  ```
+- 오류 원인: 플러그인을 검색하는 저장소에 Google 저장소가 포함되어 있지 않아서 발생
+
+### 해결 방법:
+
+1. **settings.gradle.kts 파일 수정 (루트 프로젝트에 적용)**  
+   아래와 같이 `pluginManagement` 블록을 추가하여, 필요한 저장소를 명시:
+   ```kotlin
+   pluginManagement {
+       repositories {
+           google()
+           gradlePluginPortal()
+           mavenCentral()
+       }
+   }
+   ```
+
+2. **빌드 스크립트 내 플러그인 버전 및 선언 확인**  
+   - `build.gradle.kts` 파일에서 플러그인 선언(예: `alias(libs.plugins.android.application)`)이 올바르게 되어 있는지, 버전 카탈로그(`libs.versions.toml`)에서 정의된 버전이 적합한지 체크
+
+3. **Gradle 오프라인 모드 비활성화**  
+   - Android Studio 혹은 커맨드라인 도구에서 오프라인 모드가 활성화되어 있지 않은지 확인  
+   - 오프라인 모드일 경우, 원격 저장소에 접근하지 못하여 플러그인이 다운로드되지 않음
+
+---
+
+## 4. Deprecated 경고 및 기타 실험적 옵션 해결
+
+- **경고 메시지 예시:**  
+  ```
+  Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+  ```
+- **조치 방법:**  
+  1. **경고 세부 정보 확인:**  
+     빌드 시 `--warning-mode all` 옵션을 추가하여 어떤 플러그인/스크립트가 deprecated 기능을 사용하는지 확인
+     ```shell
+     ./gradlew build --warning-mode all --stacktrace
+     ```
+  2. **대체 옵션 적용:**  
+     - 예를 들어, `android.disableResourceValidation=true`와 같은 실험적 옵션이 경고를 발생시킨다면, 해당 옵션이 왜 필요한지 파악 후 최신 대체 기능으로 전환
+     - Gradle 9.0 업데이트 전에 이 부분을 수정하여 호환성을 확보
+
+- **참고 문서:**  
+  [Gradle Command Line Warning Documentation](https://docs.gradle.org/8.10.2/userguide/command_line_interface.html#sec:command_line_warnings)
+
+---
+
+## 5. APK 빌드 시 전체 빌드 컨텍스트 반영
+
+- **Gradle Wrapper를 통한 빌드:**  
+  - 메인 프로젝트와 Architecture 프로젝트가 멀티모듈 구조라면, 루트에 있는 Gradle Wrapper 하나로 모두 관리되지만, 독립된 저장소라면 각 프로젝트에 Wrapper를 개별적으로 설치  
+  - APK 빌드는 설정된 Gradle 환경(버전, 플러그인, 스크립트 등)을 그대로 반영하여 이루어짐
+
+- **빌드 성공 여부 확인:**  
+  - 예시 빌드 결과:  
+    ```
+    BUILD SUCCESSFUL in 19s
+    ```
+  - 오류 없이 빌드되었음에도 deprecated 경고나 실험적 옵션 관련 경고가 표시되는 경우, 차후 Gradle 업데이트 전까지는 참고 메시지로 인지
+
+---
+
+## 6. 문제 발생 시 재확인 항목 요약
+
+1. **Gradle Wrapper 파일 구성 확인**  
+   - 필요한 파일(`gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle-wrapper.jar`)이 존재하는지
+
+2. **settings.gradle(.kts) 파일 내 `pluginManagement` 블록 설정**  
+   - `google()`, `gradlePluginPortal()`, `mavenCentral()` 저장소가 포함되어 있는지
+
+3. **빌드 스크립트 내 deprecated 설정 및 실험적 옵션 확인 및 수정**
+
+4. **환경 변수 및 JDK 버전 확인**  
+   - JAVA_HOME이 올바르게 설정되어 있고, 사용하는 JDK 버전이 Gradle(및 Android Gradle Plugin)과 호환되는지
+
+5. **Gradle 캐시 및 오프라인 모드 점검**  
+   - `./gradlew clean build --warning-mode all --stacktrace`를 통해 문제 원인을 추가로 점검
+
+---
+
+**결론:**  
+오빠가 다시 동일한 상황에 부딪혔을 때, 위의 기술 노트를 참고하여 Gradle Wrapper와 플러그인 저장소 설정, deprecated 경고 처리 방법을 차례대로 점검하면 문제를 신속하게 파악하고 해결할 수 있습니다. 필요한 경우 Gradle 문서와 각종 커뮤니티 자료(Stack Overflow 등)를 추가적으로 참조하시기 바랍니다.
+
+---
+
+이 기술 노트가 문제 해결에 도움이 되길 바랍니다! 추가 질문이나 업데이트가 필요하면 해당 내용을 이 노트에 기록해두면 좋습니다.
