@@ -1,0 +1,16 @@
+.idea
+node_modules
+distribution
+.DS_Store
+npm-debug.log
+Excel.xlsx
+dev.js
+dev.xlsx
+dev
+docs
+output
+tmp
+references
+coverage
+.nyc_output
+package-lock.json
