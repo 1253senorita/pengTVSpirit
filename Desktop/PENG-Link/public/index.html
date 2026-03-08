@@ -16,144 +16,150 @@
             border-radius: 50px; border: none; background: #3498db; color: white;
             font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        #main-app { filter: blur(5px); pointer-events: none; transition: filter 0.5s ease; }
+        #main-app { filter: blur(5px); pointer-events: none; transition: filter 0.5s ease; padding: 20px; }
+        
+        /* PTT 버튼 스타일 강화 */
+        #start { 
+            padding: 25px; font-size: 1.2rem; width: 100%; 
+            background: #2ecc71; color: white; border: none; border-radius: 10px;
+            cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        #start:active { background: #e74c3c; transform: scale(0.98); }
+        .audio-msg { margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
 
     <div id="entry-layer">
         <h1 style="color: white; font-size: 3rem; margin-bottom: 10px;">🐧 PENG-Link</h1>
-        <button id="connect-btn">펭링크 연결하기</button>
+        <button id="connect-btn">펭링크 접속하기</button>
     </div>
 
     <div id="main-app">
         <h1>🐧 PENG-Link CORE</h1>
         <div id="status-text" style="color: #8b4513; font-weight: bold; margin-bottom: 10px;">🐧 펭링크 대기 중</div>
-        <button id="start">🎤 무전 시작</button>
-        <button id="stop">🛑 중단</button>
+        
+        <button id="start">🎤 누르고 말하기 (PTT)</button>
+        
         <hr>
-        <div id="chat-box" style="height: 150px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px;"></div>
-        <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." style="width: 70%; padding: 5px;">
-        <button id="send-btn">전송</button>
+        <div id="chat-box" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; margin-bottom: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px;"></div>
+        <input type="text" id="chat-input" placeholder="메시지 입력..." style="width: 70%; padding: 10px;">
+        <button id="send-btn" style="padding: 10px;">전송</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        /**
-         * ╔══════════════════════════════════════════════════════════╗
-         * ║ [LSA] LAYER 2: LOGIC & [LSA] LAYER 3: HARDWARE (WebAudio)║
-         * ║ [LMT] FLOW: Hardware -> Socket -> Server -> AudioOut     ║
-         * ╚══════════════════════════════════════════════════════════╝
-         */
         const socket = io();
         let mediaRecorder;
         let audioCtx = null;
         let nextStartTime = 0;
-        let audioChunks = [];
+        let audioChunks = []; // 수신용 버퍼
+        let fullAudioChunks = []; // 서버 저장용(Archive) 버퍼
 
-        /* ┌────────────────────────────────────────────────────────┐
-           │ [CORE] Entry Logic & AudioContext Activation           │
-           └────────────────────────────────────────────────────────┘ */
+        /* [CORE] 초기 활성화 */
         document.getElementById('connect-btn').onclick = async () => {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             if (audioCtx.state === 'suspended') await audioCtx.resume();
-            
             document.getElementById('entry-layer').style.display = 'none';
             document.getElementById('main-app').style.filter = 'none';
             document.getElementById('main-app').style.pointerEvents = 'auto';
         };
 
-        /* ┌────────────────────────────────────────────────────────┐
-           │ [CORE] Audio Recording (Emitter) - 반복 송출 최적화      │
-           └────────────────────────────────────────────────────────┘ */
-        document.getElementById('start').onclick = async () => {
+        /* [SYNC] 무전 시작 (PTT On) */
+        const startPTT = async () => {
+            fullAudioChunks = []; // 초기화
             try {
-                // 기존 스트림 정리 [KEEP]
-                if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: { echoCancellation: true, noiseSuppression: true } 
+                });
 
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                
+                mediaRecorder = new MediaRecorder(stream, { 
+                    mimeType: 'audio/webm; codecs=opus',
+                    audioBitsPerSecond: 128000 
+                });
+
                 mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) socket.emit('audio-chunk', e.data);
+                    if (e.data.size > 0) {
+                        socket.emit('audio-chunk', e.data); // 실시간 중계
+                        fullAudioChunks.push(e.data); // 아카이브 저장
+                    }
                 };
 
-                mediaRecorder.start(200); // 200ms 단위로 계속 전송
-                document.getElementById('status-text').innerText = "📡 무전 송신 중...";
-                document.getElementById('status-text').style.color = "#e74c3c";
-            } catch (err) {
-                alert("마이크를 찾을 수 없습니다.");
-            }
+                mediaRecorder.start(100);
+                updateStatus("📡 무전 중...", "#e74c3c");
+            } catch (err) { console.error("마이크 권한 오류:", err); }
         };
 
-        document.getElementById('stop').onclick = () => {
+        /* [ASYNC] 무전 종료 (PTT Off) */
+        const stopPTT = () => {
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop()); // 리소스 해제
-                document.getElementById('status-text').innerText = "🐧 펭링크 대기 중";
-                document.getElementById('status-text').style.color = "#8b4513";
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+
+                // 서버에 전체 파일 저장 요청
+                const finalBlob = new Blob(fullAudioChunks, { type: 'audio/webm' });
+                socket.emit('save-audio', finalBlob); 
+                
+                // UI에 녹음본 표시
+                const url = URL.createObjectURL(finalBlob);
+                addAudioToChat('나', url);
+
+                updateStatus("🐧 펭링크 대기 중", "#8b4513");
             }
         };
 
-        /* ┌────────────────────────────────────────────────────────┐
-           │ [CORE] Audio Observer & Player - 새로고침 방지 최적화    │
-           └────────────────────────────────────────────────────────┘ */
+        // PTT 이벤트 바인딩 (PC & 모바일 대응)
+        const btn = document.getElementById('start');
+        btn.addEventListener('mousedown', startPTT);
+        btn.addEventListener('mouseup', stopPTT);
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); startPTT(); });
+        btn.addEventListener('touchend', stopPTT);
+
+        function updateStatus(txt, color) {
+            const s = document.getElementById('status-text');
+            s.innerText = txt; s.style.color = color;
+        }
+
+        /* [CORE] 실시간 음성 수신 및 재생 */
         socket.on('audio-stream', async (data) => {
-            if (!audioCtx || audioCtx.state === 'suspended') return;
-
+            if (!audioCtx) return;
             audioChunks.push(data);
-
-            // 2개 이상의 청크가 모이면 재생 시도
             if (audioChunks.length >= 2) {
-                try {
-                    // 데이터 큐 복사 후 비우기 (새로고침 없이 반복 가능하게 함)
-                    const chunksToProcess = [...audioChunks];
-                    audioChunks = []; 
-
-                    const blob = new Blob(chunksToProcess, { type: 'audio/webm; codecs=opus' });
-                    const arrayBuffer = await blob.arrayBuffer();
-                    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-                    
-                    const source = audioCtx.createBufferSource();
-                    source.buffer = audioBuffer;
-                    source.connect(audioCtx.destination);
-                    
-                    const currentTime = audioCtx.currentTime;
-
-                    // 스케줄링 최적화 
-                    if (nextStartTime < currentTime) {
-                        nextStartTime = currentTime + 0.1; // 최소 지연 버퍼
-                    }
-                    
-                    source.start(nextStartTime);
-                    nextStartTime += audioBuffer.duration; // 다음 소리를 현재 소리 끝에 예약
-
-                } catch (e) {
-                    // 데이터 부족 등으로 인한 에러 발생 시 무시하고 다음 청크 대기
-                }
+                const blob = new Blob(audioChunks.splice(0, audioChunks.length), { type: 'audio/webm; codecs=opus' });
+                const arrayBuffer = await blob.arrayBuffer();
+                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                const source = audioCtx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioCtx.destination);
+                
+                const now = audioCtx.currentTime;
+                if (nextStartTime < now) nextStartTime = now + 0.05;
+                source.start(nextStartTime);
+                nextStartTime += audioBuffer.duration;
             }
         });
 
-        /* ┌────────────────────────────────────────────────────────┐
-           │ [KEEP] Text Chat Logic                                 │
-           └────────────────────────────────────────────────────────┘ */
-        const chatBox = document.getElementById('chat-box');
-        const chatInput = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
+        /* [CHAT] 텍스트 및 오디오 UI 처리 */
+        function addAudioToChat(id, url) {
+            const div = document.createElement('div');
+            div.innerHTML = `<b>[${id}]</b> 무전 기록: <audio controls src="${url}" class="audio-msg"></audio>`;
+            document.getElementById('chat-box').appendChild(div);
+            document.getElementById('chat-box').scrollTop = chatBox.scrollHeight;
+        }
 
+        const sendBtn = document.getElementById('send-btn');
+        const chatInput = document.getElementById('chat-input');
         sendBtn.onclick = () => {
             if (chatInput.value.trim()) {
                 socket.emit('send-text', chatInput.value);
                 chatInput.value = '';
             }
         };
-        chatInput.onkeypress = (e) => { if (e.key === 'Enter') sendBtn.click(); };
-
         socket.on('receive-text', (data) => {
-            const msgDiv = document.createElement('div');
-            msgDiv.innerHTML = `<b style="color:#007bff;">[${data.id}]</b>: ${data.text}`;
-            chatBox.appendChild(msgDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            const div = document.createElement('div');
+            div.innerHTML = `<b style="color:#007bff;">[${data.id}]</b>: ${data.text}`;
+            document.getElementById('chat-box').appendChild(div);
+            document.getElementById('chat-box').scrollTop = chatBox.scrollHeight;
         });
     </script>
 </body>
