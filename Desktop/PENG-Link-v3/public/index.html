@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENG-Link-v3 | Matrix System</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            margin: 0;
+            font-family: 'Consolas', monospace;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            
+            /* [전체 패딩 20px 적용] */
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 10px; /* 섹션 간 자동 간격 설정 */
+        }
+
+        /* ==========================================================================
+           [1. SYSTEM APP BAR]
+           ==========================================================================
+        */
+        .system-app-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            background: #151515;
+            border: 1px solid #4CAF50;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 4px;
+        }
+
+        .sys-info-group { display: flex; align-items: center; gap: 15px; font-size: 0.7rem; }
+        .sys-btn-group { display: flex; gap: 10px; }
+
+        .app-bar-btn {
+            background: #222;
+            border: 1px solid #444;
+            color: #888;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           [2. NAVIGATION BAR]
+           ==========================================================================
+        */
+        .nav-header {
+            display: flex;
+            gap: 6px;
+            background: transparent;
+            flex-shrink: 0;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px 2px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #4CAF50;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .nav-btn:hover { background: #4CAF50; color: #000; border-color: #fff; }
+
+        /* ==========================================================================
+           [3. MAIN CONTENT]
+           ==========================================================================
+        */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #333;
+            border-radius: 4px;
+        }
+
+        .status-card {
+            background: rgba(20, 20, 20, 0.8);
+            padding: 3rem;
+            border: 1px solid #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.1);
+            text-align: center;
+        }
+
+        /* ==========================================================================
+           [4. FOOTER MONITOR]
+           ==========================================================================
+        */
+        .footer-container {
+            display: flex;
+            height: 85px;
+            background: #111;
+            border: 1px solid #333;
+            flex-shrink: 0;
+            border-radius: 4px;
+        }
+
+        .footer-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #222;
+        }
+
+        .footer-item:last-child { border-right: none; }
+        .footer-val { font-weight: bold; color: #4CAF50; font-size: 0.75rem; margin-top: 4px; }
+
+        /* [HELPERS] */
+        .dot {
+            height: 8px;
+            width: 8px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 5px #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="system-app-bar">
+        <div class="sys-info-group">
+            <span><span class="dot"></span>OS: PENG-LINK-V3</span>
+            <span id="live-clock">00:00:00</span>
+        </div>
+        <div class="sys-btn-group">
+            <button class="app-bar-btn">SET</button>
+            <button class="app-bar-btn">LOG</button>
+            <button class="app-bar-btn" style="color: #ff5252;">EXIT</button>
+        </div>
+    </header>
+
+
+    <nav class="nav-header">
+        <button class="nav-btn">NAV_01</button>
+        <button class="nav-btn">NAV_02</button>
+        <button class="nav-btn">NAV_03</button>
+        <button class="nav-btn">NAV_04</button>
+        <button class="nav-btn">NAV_05</button>
+        <button class="nav-btn">NAV_06</button>
+        <button class="nav-btn">NAV_07</button>
+        <button class="nav-btn">NAV_08</button>
+    </nav>
+
+
+    <main class="main-content">
+        <div class="status-card">
+            <h1 style="letter-spacing: 8px; margin: 0; color: #4CAF50;">PENG-LINK</h1>
+            <p style="color: #666; font-size: 0.7rem; margin-top: 15px; text-transform: uppercase;">Secure Terminal Access</p>
+        </div>
+    </main>
+
+
+    <footer class="footer-container">
+        <div class="footer-item"><small>CPU</small><div class="footer-val">0.5%</div></div>
+        <div class="footer-item"><small>RAM</small><div class="footer-val">38MB</div></div>
+        <div class="footer-item"><small>NET</small><div class="footer-val">STABLE</div></div>
+        <div class="footer-item"><small>ID</small><div id="socket-id-display" class="footer-val">---</div></div>
+        <div class="footer-item"><small>LAT</small><div class="footer-val">2ms</div></div>
+        <div class="footer-item"><small>BUF</small><div class="footer-val">0kb</div></div>
+        <div class="footer-item"><small>CON</small><div class="footer-val">12</div></div>
+        <div class="footer-item"><small>VER</small><div class="footer-val">v3.0</div></div>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on('connect', () => {
+            document.getElementById('socket-id-display').innerText = socket.id.substring(0, 5).toUpperCase();
+        });
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+        }, 1000);
+    </script>
+</body>
+</html>
