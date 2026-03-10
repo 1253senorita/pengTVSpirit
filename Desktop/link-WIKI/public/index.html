@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>PENG-Link WIKI :: RADIO_COMM</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body style="display: flex; flex-direction: column; height: 100vh; margin: 0; background: #000; color: #0f0; overflow: hidden;">
+
+    <header style="flex: 0 0 60px; background: #111; display: flex; align-items: center; padding: 0 20px; border-bottom: 2px solid #333;">
+        <div id="led" style="width: 15px; height: 15px; border-radius: 50%; background: #333; margin-right: 15px;"></div>
+        <span style="font-weight: bold; letter-spacing: 1px;">SYSTEM: CONNECTED | PORT: 3000</span>
+    </header>
+
+    <main style="flex: 1; display: flex; background: #000;">
+        <nav class="side-panel" style="flex: 0 0 160px; display: grid; grid-template-rows: repeat(8, 1fr); gap: 5px; padding: 10px; border-right: 1px solid #333;">
+            <button class="radio-btn" onclick="changeChannel(1)">CH 01</button>
+            <button class="radio-btn" onclick="changeChannel(2)">CH 02</button>
+            <button class="radio-btn" onclick="changeChannel(3)">CH 03</button>
+            <button class="radio-btn" onclick="changeChannel(4)">CH 04</button>
+            <button class="radio-btn" onclick="changeChannel(5)">CH 05</button>
+            <button class="radio-btn" onclick="changeChannel(6)">CH 06</button>
+            <button class="radio-btn" onclick="changeChannel(7)">CH 07</button>
+            <button class="radio-btn" onclick="changeChannel(8)">CH 08</button>
+        </nav>
+
+        <section id="activity-fragment" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: radial-gradient(circle, #111 0%, #000 100%);">
+            <div style="font-size: 0.8rem; color: #555; margin-bottom: 5px;">CURRENT FREQUENCY</div>
+            <div id="freq-display" style="font-size: 1.5rem; color: #0f0; font-family: monospace; margin-bottom: 10px;">446.00625 MHz</div>
+            <div id="channel-display" style="font-size: 4rem; font-weight: bold; color: #0af; margin-bottom: 20px; text-shadow: 0 0 20px #0af;">CH-01</div>
+            
+            <div id="v-meter-container" style="width: 90%; height: 40px; border: 2px solid #333; background: #050505; position: relative; overflow: hidden;">
+                <div id="v-meter-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #0f0, #ff0, #f00); transition: width 0.05s;"></div>
+            </div>
+            <div id="display-info" style="margin-top: 25px; font-size: 1.8rem; font-weight: bold;">IDLE</div>
+        </section>
+
+        <nav class="side-panel" style="flex: 0 0 160px; display: grid; grid-template-rows: repeat(8, 1fr); gap: 5px; padding: 10px; border-left: 1px solid #333;">
+
+
+            <button class="radio-btn control">VOL UP</button>
+            <button class="radio-btn control">VOL DN</button>
+            <button class="radio-btn control">SQL</button>
+            <button class="radio-btn control">SCAN</button>
+            <button class="radio-btn control">ENCRYPT</button>
+            <button class="radio-btn control">WIKI</button>
+            <button class="radio-btn control">SETUP</button>
+            <button class="radio-btn control">EXIT</button>
+            
+              <audio id="remote-audio" autoplay></audio>
+        </nav>
+    </main>
+
+    <footer style="flex: 0 0 160px; background: #111; border-top: 2px solid #333; display: flex; align-items: center; justify-content: center;">
+        <div id="ptt-trigger" style="width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(#444, #222); border: 8px solid #333; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 1.2rem; user-select: none;">
+            PTT
+        </div>
+    </footer>
+
+    <script src="js/socket-mgr.js"></script>
+    <style>
+        .radio-btn { background: #222; border: 1px solid #444; color: #0f0; font-family: monospace; cursor: pointer; transition: 0.2s; border-radius: 3px; }
+        .radio-btn:hover { background: #333; border-color: #0f0; }
+        .radio-btn.control { color: #0af; }
+        .radio-btn.control:hover { border-color: #0af; }
+    </style>
+</body>
+</html>
