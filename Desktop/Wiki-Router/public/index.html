@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>BEAR-Talkie (Wiki-Router Module)</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        /* UI 레이아웃: 오빠의 원본 스타일 유지하되 Wiki-Router 테마에 맞춤 */
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; background: #121212; color: #fff; font-family: sans-serif; overflow: hidden; }
+        .container { display: flex; flex-direction: column; flex: 1; padding: 15px; gap: 10px; }
+        .display-zone { flex: 1.5; background: #1e1e1e; border: 1px solid #333; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .vu-meter { display: flex; align-items: flex-end; gap: 4px; height: 50px; margin-bottom: 10px; }
+        .bar { width: 8px; height: 5px; background: #3498db; border-radius: 1px; transition: height 0.05s; }
+        .chat-zone { flex: 2; background: #000; border-radius: 8px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; border: 1px solid #222; }
+        .control-zone { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .ptt-btn { width: 120px; height: 120px; border-radius: 50%; border: none; background: radial-gradient(circle, #3498db, #2980b9); color: #fff; font-weight: bold; cursor: pointer; user-select: none; }
+        .ptt-btn:active { background: #e74c3c; transform: scale(0.95); }
+        #audio-unlock { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; align-items: center; justify-content: center; cursor: pointer; border-radius: 12px; font-weight: bold; color: #3498db; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="display-zone">
+            <div id="audio-unlock">🔈 시스템 활성화 (클릭)</div>
+            <div class="vu-meter">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+            <div id="status-display" style="font-size: 1.5rem; font-weight: bold;">STANDBY</div>
+            <div id="my-id" style="font-size: 0.8rem; color: #555; margin-top: 10px;">ID 연결 중...</div>
+        </div>
+        <div class="chat-zone" id="chat-box"></div>
+        <div class="control-zone">
+            <button class="ptt-btn" id="ptt-trigger">PTT ON</button>
+        </div>
+    </div>
+
+<script>
+    // ✅ Wiki-Router 통합 연결: 주소를 비워두면 자동으로 현재 서버에 붙음
+    const socket = io(); 
+    const pttBtn = document.getElementById('ptt-trigger');
+    const display = document.getElementById('status-display');
+    const myIdTag = document.getElementById('my-id');
+
+    let myStream, activeCalls = [];
+    let audioContext;
+
+    // ✅ PeerJS 초기화 (메인 서버의 Peer 서버 기능을 사용하도록 설정)
+    const peer = new Peer({
+        host: location.hostname,
+        port: 3000, 
+        path: '/peerjs' 
+    });
+
+    peer.on('open', (id) => {
+        myIdTag.innerText = "MY ID: " + id;
+        socket.emit('register-peer', id); // 🏗️ Wiki-Router 서버에 나를 알림
+    });
+
+    peer.on('call', (call) => {
+        call.answer(); 
+        call.on('stream', (remoteStream) => { playStream(remoteStream); });
+    });
+
+    function playStream(stream) {
+        const audio = new Audio();
+        audio.srcObject = stream;
+        display.innerText = "RECEIVING...";
+        display.style.color = "#3498db";
+        audio.play().catch(err => console.error("재생 실패:", err));
+        
+        stream.onremovetrack = () => {
+            display.innerText = "STANDBY";
+            display.style.color = "#fff";
+        };
+    }
+
+    const startTalking = async (e) => {
+        if (e.cancelable) e.preventDefault();
+        if (!myStream) {
+            try {
+                myStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch (err) {
+                alert("마이크 권한이 필요합니다.");
+                return;
+            }
+        }
+        display.innerText = "TALKING...";
+        display.style.color = "#e74c3c";
+        socket.emit('get-peers'); // 🏗️ Wiki-Router 서버에 접속자 리스트 요청
+    };
+
+    const stopTalking = () => {
+        activeCalls.forEach(call => call.close());
+        activeCalls = [];
+        display.innerText = "STANDBY";
+        display.style.color = "#fff";
+    };
+
+    pttBtn.addEventListener('mousedown', startTalking);
+    window.addEventListener('mouseup', stopTalking);
+    pttBtn.addEventListener('touchstart', startTalking);
+    window.addEventListener('touchend', stopTalking);
+
+    // 🏗️ Wiki-Router 서버에서 전달받은 리스트로 무전 연결
+    socket.on('peer-list', (peerIds) => {
+        peerIds.forEach(targetId => {
+            if (targetId !== peer.id) {
+                const call = peer.call(targetId, myStream);
+                activeCalls.push(call);
+            }
+        });
+    });
+
+    document.getElementById('audio-unlock').addEventListener('click', function() {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext.resume();
+        this.style.display = 'none';
+        console.log("System Ready");
+    });
+</script>
+</body>
+</html>
