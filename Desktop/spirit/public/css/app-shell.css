@@ -1,0 +1,16 @@
+/* Protected Section: Design Constants */
+:root {
+    --bg-color: #e0e0e0;
+    --shadow-light: #ffffff;
+    --shadow-dark: #bebebe;
+    --radius: 20px;
+}
+
+.neumorphism-layer {
+    background: var(--bg-color);
+    border-radius: var(--radius);
+    box-shadow: 20px 20px 60px var(--shadow-dark),
+                -20px -20px 60px var(--shadow-light);
+    padding: 2rem;
+    border: none;
+}
