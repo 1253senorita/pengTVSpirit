@@ -2,16 +2,35 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
     <title>WIKI-ROUTER v5.2</title>
+
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/app-shell.css">
 </head>
 <body class="neumorphism-layer">
-    <h1>WIKI-ROUTER v5.2 Online</h1>
-    <div id="status-panel">
-        <p>System Status: <span id="auth-status">Locked</span></p>
-        <button onclick="login()">Activate Engine</button>
-    </div>
+
+    <header>
+        <h1>WIKI-ROUTER v5.2</h1>
+        <div id="status-display">
+            System Status: <span id="status">Locked</span>
+        </div>
+    </header>
+
+    <main id="main-blanket">
+        <section id="initial-view">
+            <button id="activate-btn" onclick="activateEngine()">Activate Engine</button>
+        </section>
+    </main>
+<nav id="bottom-nav">
+    <button class="nav-btn" id="btn-phone" onclick="handleNavClick('phone')">📞 전화</button>
+    <button class="nav-btn" id="btn-ptt" onclick="handleNavClick('ptt')">📻 무전</button>
+    <button class="nav-btn" id="btn-chat" onclick="handleNavClick('chat')">💬 문자</button>
+</nav>
+    <footer>
+        <p>© 2026 Spirit System</p>
+    </footer>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/app-core.js"></script>
