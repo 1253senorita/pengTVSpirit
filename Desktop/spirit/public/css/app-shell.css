@@ -1,71 +1,128 @@
 :root {
-    --bg-color: #e0e5ec; /* 조금 더 밝고 깨끗한 톤으로 변경 */
+    --bg-color: #e0e5ec;
     --shadow-light: #ffffff;
-    --shadow-dark: #a3b1c6; /* 배경색과 대비가 더 자연스러운 그림자 */
+    --shadow-dark: #a3b1c6;
     --accent-color: #3498db; 
+    --tx-color: #ff4757; /* 송신 중 강조 컬러 */
     --radius: 30px;
+    --inner-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                    inset -6px -6px 12px var(--shadow-light);
+    --outer-shadow: 7px 7px 15px var(--shadow-dark), 
+                    -7px -7px 15px var(--shadow-light);
 }
 
-/* 스크롤바 숨기기 (깔끔한 UI를 위해) */
-#main-blanket::-webkit-scrollbar {
-    width: 0;
+/* 1. 기본 초기화 & 모바일 최적화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none; /* 텍스트 선택 방지 (무전기 필수) */
+    font-family: 'Pretendard', -apple-system, sans-serif;
 }
 
-#main-blanket {
+body {
+    background-color: var(--bg-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 스크롤 튕김 방지 */
+}
+
+/* 2. 공통 뉴모피즘 레이어 */
+.neumorphism-layer {
+    background: var(--bg-color);
+}
+
+/* 3. 헤더 영역 */
+header {
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 1.2rem;
+    color: #61677c;
+    letter-spacing: 1px;
+}
+
+#status-display {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #9baacf;
+}
+
+/* 4. 메인 뷰포트 (가장 중요: 모듈이 교체되는 공간) */
+#app-viewport {
     flex: 1;
-    margin: 20px;
-    padding: 30px; /* 여백을 조금 더 확보 */
+    margin: 15px;
+    padding: 20px;
     border-radius: var(--radius);
     background: var(--bg-color);
-    
-    /* 음각 효과 디테일 수정 */
-    box-shadow: inset 6px 6px 12px var(--shadow-dark), 
-                inset -6px -6px 12px var(--shadow-light);
-    
+    box-shadow: var(--inner-shadow);
     display: flex;
     flex-direction: column; 
     justify-content: center;
     align-items: center;
+    position: relative;
     overflow-y: auto;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 부드러운 바운스 효과 */
 }
 
-#activate-btn {
-    padding: 18px 36px;
+/* 5. 네비게이션 바 (하단 고정) */
+#bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+    background: var(--bg-color);
+    box-shadow: 0 -10px 20px rgba(0,0,0,0.05);
+}
+
+.nav-btn {
+    border: none;
+    background: var(--bg-color);
+    padding: 12px 20px;
+    border-radius: 15px;
+    box-shadow: var(--outer-shadow);
+    color: #61677c;
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:active {
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), 
+                inset -4px -4px 8px var(--shadow-light);
+    transform: scale(0.95);
+}
+
+/* 6. 공통 컴포넌트 (PTT, 버튼 등) */
+.neo-btn {
+    padding: 15px 30px;
     border: none;
     border-radius: 20px;
     background: var(--bg-color);
     color: #61677c; 
     font-weight: 700;
-    font-size: 1.1rem;
+    box-shadow: var(--outer-shadow);
+    transition: all 0.2s ease;
     cursor: pointer;
-    letter-spacing: 0.5px;
-    
-    /* 양각 효과 */
-    box-shadow: 7px 7px 15px var(--shadow-dark), 
-                -7px -7px 15px var(--shadow-light);
-    transition: all 0.2s ease-in-out;
-    outline: none; /* 클릭 시 테두리 제거 */
 }
 
-/* Hover: 살짝 떠오르면서 텍스트 강조 */
-#activate-btn:hover {
-    box-shadow: 10px 10px 20px var(--shadow-dark), 
-                -10px -10px 20px var(--shadow-light);
-    color: var(--accent-color);
-    transform: translateY(-2px); /* 시각적으로 떠오르는 느낌 추가 */
-}
-
-/* Active: 꾹 눌리는 물리적 피드백 */
-#activate-btn:active {
+.neo-btn:active {
     box-shadow: inset 4px 4px 8px var(--shadow-dark), 
                 inset -4px -4px 8px var(--shadow-light);
-    transform: translateY(0) scale(0.98);
 }
 
-/* .nav-btn.active 스타일 수정 (뉴모피즘 유지 버전) */
-.nav-btn.active {
-    color: var(--accent-color);
-    box-shadow: inset 3px 3px 7px var(--shadow-dark), 
-                inset -3px -3px 7px var(--shadow-light) !important;
+/* 7. 애니메이션 클래스 */
+.view-fade {
+    animation: fadeIn 0.4s ease-out;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
