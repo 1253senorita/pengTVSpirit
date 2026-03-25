@@ -18,21 +18,86 @@
         </div>
     </header>
 
-    <main id="main-blanket">
-        <section id="initial-view">
-            <button id="activate-btn" onclick="activateEngine()">Activate Engine</button>
-        </section>
-    </main>
+
+
+<main id="main-blanket">
+    <section id="initial-view">
+        <div class="auth-box">
+             <button id="activate-btn" onclick="activateEngine()">Activate Engine</button>
+        </div>
+    </section>
+
+    <section id="phone-view" style="display: none;">
+        <div class="view-fade">
+            <h2 class="auth-title">📞 DIALER</h2>
+            <div class="auth-box" style="margin: 0 auto;">
+                <input type="text" id="dial-number" placeholder="상대방 ID 입력" readonly>
+                <div class="button-group">
+                    <button onclick="appendNum('1')" class="neo-btn">1</button>
+                    <button onclick="appendNum('2')" class="neo-btn">2</button>
+                    <button onclick="appendNum('3')" class="neo-btn">3</button>
+                    </div>
+                <button id="call-start-btn" onclick="makeCall()" 
+                        style="background: #3498db; color: white; border-radius: 20px; padding: 15px; width: 100%; border: none; font-weight: bold; margin-top: 15px;">
+                    통화 시작
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="ptt-view" style="display: none;">
+        <div class="view-fade">
+            <h2 class="auth-title">📻 Push-To-Talk</h2>
+            <div class="auth-box">
+                <div id="ptt-status" style="margin-bottom: 20px;">대기 중...</div>
+                <button id="p-trig" onmousedown="startPTT()" onmouseup="stopPTT()" 
+                        style="width: 150px; height: 150px; border-radius: 50%; font-size: 3rem;">🐧</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+
+
+
 <nav id="bottom-nav">
     <button class="nav-btn" id="btn-phone" onclick="handleNavClick('phone')">📞 전화</button>
     <button class="nav-btn" id="btn-ptt" onclick="handleNavClick('ptt')">📻 무전</button>
     <button class="nav-btn" id="btn-chat" onclick="handleNavClick('chat')">💬 문자</button>
 </nav>
+<div class="view-fade">
+    <h2 class="auth-title">📞 DIALER</h2>
+    
+    <div class="auth-box" style="margin: 0 auto;">
+        <input type="text" id="dial-number" placeholder="상대방 ID 입력" value="">
+        
+        <div class="button-group">
+            <button onclick="appendNum('1')" class="neo-btn">1</button>
+            <button onclick="appendNum('2')" class="neo-btn">2</button>
+            <button onclick="appendNum('3')" class="neo-btn">3</button>
+        </div>
+        
+<input type="text" id="dial-number" placeholder="ID 입력" readonly class="neo-input">
+
+
+        <button id="call-start-btn" onclick="makeCall()" 
+                style="background: var(--peng); color: white; border-radius: 20px; padding: 15px; width: 100%; border: none; font-weight: bold; cursor: pointer;">
+            통화 시작
+        </button>
+    </div>
+</div>
+
+
+
     <footer>
         <p>© 2026 Spirit System</p>
     </footer>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/app-core.js"></script>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="/js/app-core.js"></script>
+
 </body>
 </html>

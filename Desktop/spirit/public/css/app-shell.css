@@ -1,82 +1,71 @@
-/* 1. 디자인 상수 수정 (시인성 강화 버전) */
 :root {
-    /* 배경을 살짝 낮춰서 마우스와 버튼이 잘 보이게! */
-    --bg-color: #d1d9e6; 
+    --bg-color: #e0e5ec; /* 조금 더 밝고 깨끗한 톤으로 변경 */
     --shadow-light: #ffffff;
-    --shadow-dark: #b8b9be; 
-    --accent-color: #3498db; /* 포인트 컬러 (필요할 때 사용) */
+    --shadow-dark: #a3b1c6; /* 배경색과 대비가 더 자연스러운 그림자 */
+    --accent-color: #3498db; 
     --radius: 30px;
 }
 
-/* 2. 전체 배경 & 마우스 커서 개선 */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: var(--bg-color);
-    /* 마우스 커서가 잘 보이도록 기본 텍스트 컬러 지정 */
-    color: #31344b; 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+/* 스크롤바 숨기기 (깔끔한 UI를 위해) */
+#main-blanket::-webkit-scrollbar {
+    width: 0;
 }
 
-/* 4. 메인 영역 (음각 효과 강화) */
 #main-blanket {
     flex: 1;
     margin: 20px;
-    padding: 20px;
+    padding: 30px; /* 여백을 조금 더 확보 */
     border-radius: var(--radius);
     background: var(--bg-color);
     
-    /* 그림자 깊이를 조금 더 깊게 (12px -> 16px) */
-    box-shadow: inset 8px 8px 16px var(--shadow-dark), 
-                inset -8px -8px 16px var(--shadow-light);
+    /* 음각 효과 디테일 수정 */
+    box-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                inset -6px -6px 12px var(--shadow-light);
     
     display: flex;
-    flex-direction: column; /* 세로 정렬로 변경 */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
     overflow-y: auto;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 부드러운 바운스 효과 */
 }
 
-/* 5. 버튼 (존재감 뿜뿜 버전) */
 #activate-btn {
-    padding: 20px 40px;
+    padding: 18px 36px;
     border: none;
     border-radius: 20px;
     background: var(--bg-color);
-    color: #44476a; /* 글자색을 조금 더 진하게 */
-    font-weight: 800; /* 폰트 두께 강화 */
+    color: #61677c; 
+    font-weight: 700;
     font-size: 1.1rem;
     cursor: pointer;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     
-    /* 양각 효과를 더 뚜렷하게 */
+    /* 양각 효과 */
+    box-shadow: 7px 7px 15px var(--shadow-dark), 
+                -7px -7px 15px var(--shadow-light);
+    transition: all 0.2s ease-in-out;
+    outline: none; /* 클릭 시 테두리 제거 */
+}
+
+/* Hover: 살짝 떠오르면서 텍스트 강조 */
+#activate-btn:hover {
     box-shadow: 10px 10px 20px var(--shadow-dark), 
                 -10px -10px 20px var(--shadow-light);
-    transition: all 0.2s ease;
+    color: var(--accent-color);
+    transform: translateY(-2px); /* 시각적으로 떠오르는 느낌 추가 */
 }
 
-/* 활성화된 버튼 스타일 */
-.nav-btn.active {
-    background-color: #00ff88 !important; /* 초록색 불 들어오게 */
-    color: #000 !important;
-    font-weight: bold;
-    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
-}
-
-
-/* 마우스 올렸을 때(Hover) 살짝 떠오르는 느낌 추가 */
-#activate-btn:hover {
-    box-shadow: 12px 12px 25px var(--shadow-dark), 
-                -12px -12px 25px var(--shadow-light);
-    color: var(--accent-color); /* 마우스 올리면 파란색으로 변함 */
-}
-
+/* Active: 꾹 눌리는 물리적 피드백 */
 #activate-btn:active {
-    box-shadow: inset 5px 5px 10px var(--shadow-dark), 
-                inset -5px -5px 10px var(--shadow-light);
-    transform: scale(0.95);
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), 
+                inset -4px -4px 8px var(--shadow-light);
+    transform: translateY(0) scale(0.98);
+}
+
+/* .nav-btn.active 스타일 수정 (뉴모피즘 유지 버전) */
+.nav-btn.active {
+    color: var(--accent-color);
+    box-shadow: inset 3px 3px 7px var(--shadow-dark), 
+                inset -3px -3px 7px var(--shadow-light) !important;
 }

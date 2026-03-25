@@ -1,225 +1,215 @@
-// 1. 상태 관리 및 소켓 초기화
+/* ==========================================
+   1. 상태 관리 및 시스템 초기화
+   ========================================== */
 let isEngineActive = false;
-const socket = io();
+const socket = io(); 
+let myPeerId = null;
+let localStream = null; // 내 마이크 스트림 저장용
 
-/**
- * 엔진 활성화: 서버 연결 + 화면 전환 시작
- */
+// PeerJS 설정
+const peer = new Peer(undefined, {
+    path: '/peerjs',
+    host: '/',
+    port: location.port || (location.protocol === 'https:' ? 443 : 80)
+});
+
+peer.on('open', id => {
+    myPeerId = id;
+    console.log('💎 내 통신 ID:', id);
+});
+
+/* [핵심 추가] 상대방이 나에게 전화를 걸었을 때 받는 로직 */
+peer.on('call', async (call) => {
+    console.log("📞 누군가로부터 전화가 왔습니다!");
+    
+    // 마이크 권한 확인 및 스트림 획득
+    if (!localStream) {
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+    
+    // 전화 받기 (내 스트림 전송)
+    call.answer(localStream);
+    
+    // 상대방 목소리 들리기 시작할 때
+    call.on('stream', (remoteStream) => {
+        playRemoteAudio(remoteStream);
+    });
+});
+
+/* ==========================================
+   2. 엔진 활성화 로직
+   ========================================== */
 function activateEngine() {
     if (isEngineActive) return;
 
-    console.log("Engine activation sequence started...");
-
-    // UI 피드백: 로딩 상태 표시
     const statusText = document.getElementById('status');
     if (statusText) {
         statusText.innerText = "System Loading...";
         statusText.style.color = "#ffcc00";
     }
 
-    // 서버(Socket.io)에 엔진 가동 신호 전송
-    socket.emit('engine-start', {
-        timestamp: new Date().getTime(),
-        status: 'active'
-    });
+    socket.emit('engine-start', { timestamp: Date.now(), status: 'active' });
 
-    // 1초 뒤 엔진 가동 완료 처리
     setTimeout(() => {
         isEngineActive = true;
-        
         if (statusText) {
             statusText.innerText = "Running...";
             statusText.style.color = "#00ff88";
         }
+        const initialView = document.getElementById('initial-view');
+        if (initialView) initialView.style.display = 'none';
 
         console.log("Spirit System v5.2 Online.");
-        
-        // 가동 즉시 첫 화면('전화')으로 자동 전환
         switchView('phone');
     }, 1000);
 }
 
-/**
- * 화면 전환: 메인 블랭킷의 내용을 갈아끼움
- */
-function switchView(view) {
-    if (!isEngineActive) {
-        alert("엔진을 먼저 활성화해주세요.");
-        return;
-    }
-
-    const mainEl = document.getElementById('main-blanket');
-    
-    // 네비게이션 버튼 UI 활성화 표시
-    updateNavUI(view);
-
-    // 각 기능별 HTML 프래그먼트 주입
-    switch(view) {
-        case 'phone':
-            mainEl.innerHTML = `
-                <div id="phone-interface" class="view-fade">
-                    <h3>📞 다이얼러</h3>
-                    <input type="text" id="phone-number" placeholder="번호 입력...">
-                    <button onclick="makeCall()">통화 시작</button>
-                </div>`;
-            break;
-            
-        case 'ptt':
-            mainEl.innerHTML = `
-                <div id="ptt-interface" class="view-fade">
-                    <h3>📻 Push-To-Talk</h3>
-                    <div id="ptt-status">대기 중...</div>
-                    <button id="ptt-btn" onmousedown="startPTT()" onmouseup="stopPTT()">
-                        누르고 말하기
-                    </button>
-                </div>`;
-            break;
-
-        case 'chat':
-            mainEl.innerHTML = `
-                <div id="chat-interface" class="view-fade">
-                    <h3>💬 실시간 문자</h3>
-                    <div id="chat-logs" style="height:150px; overflow-y:auto; background:rgba(0,0,0,0.05); border-radius:10px; padding:10px; margin-bottom:10px;"></div>
-                    <input type="text" id="msg-input" placeholder="메시지 입력...">
-                    <button onclick="sendMessage()">전송</button>
-                </div>`;
-            break;
-    }
-}
-
-
-
-
-
-
-function activateEngine() {
-    if (isEngineActive) return;
-
-    // 1. 시동 중...
-    const statusText = document.getElementById('status');
-    if (statusText) statusText.innerText = "System Loading...";
-
-    setTimeout(() => {
-        // 2. 시동 완료!
-        isEngineActive = true;
-        if (statusText) {
-            statusText.innerText = "Running...";
-            statusText.style.color = "#00ff88";
-        }
-
-        // 3. [보완] 시동 버튼 숨기기 (공간 확보)
-        const centralBtn = document.querySelector('.view-fade button'); 
-        if(centralBtn) centralBtn.style.display = 'none';
-
-        // 4. 바로 첫 화면으로 이동
-        switchView('phone'); 
-    }, 1000);
-}
-
-
-
-
-
-
-
-/**
- * 네비게이션 버튼 상태 업데이트
- */
-function updateNavUI(view) {
-    const btns = document.querySelectorAll('.nav-btn');
-    const label = { 'phone': '전화', 'ptt': '무전', 'chat': '문자' };
-    
-    btns.forEach(btn => {
-        btn.classList.remove('active');
-        if(btn.innerText.includes(label[view])) {
-            btn.classList.add('active');
-        }
-    });
-}
-
-// [점검 1] 메시지 전송 함수 (클라이언트)
-function sendMessage() {
-    const input = document.getElementById('msg-input');
-    if (!input) return;
-
-    const message = input.value.trim();
-    if (message) {
-        console.log("📤 메시지 전송 시도:", message); // 브라우저 콘솔에서 확인용
-        
-        // 서버로 'chat-msg' 이벤트 발신
-        socket.emit('chat-msg', {
-            user: "User_" + socket.id.substring(0, 4),
-            text: message,
-            time: new Date().toLocaleTimeString()
-        });
-        
-        input.value = ''; // 전송 후 입력창 비우기
-        input.focus();
-    }
-}
-
-// [점검 2] 서버에서 온 메시지 수신 대기 (중요: 이 코드는 함수 밖, 파일 하단에 한 번만 선언)
-socket.on('receive-msg', (data) => {
-    console.log("📩 메시지 수신 완료:", data);
-    const chatLogs = document.getElementById('chat-logs');
-    if (chatLogs) {
-        const msgDiv = document.createElement('div');
-        msgDiv.style.padding = "5px";
-        msgDiv.style.borderBottom = "1px solid #eee";
-        msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text} <small style="color:#888;">[${data.time}]</small>`;
-        chatLogs.appendChild(msgDiv);
-        
-        // 새 메시지가 오면 자동으로 스크롤 하단 이동
-        chatLogs.scrollTop = chatLogs.scrollHeight;
-    }
-});
-
-// 엔터 키로도 전송 가능하게 추가 (선택)
-document.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && document.activeElement.id === 'msg-input') {
-        sendMessage();
-    }
-});
-
-/**
- * 네비게이션 클릭 핸들러 (상태 체크 + 액티브 설정)
- */
+/* ==========================================
+   3. 화면 전환 및 UI 제어
+   ========================================== */
 function handleNavClick(view) {
-    // 1. 엔진이 꺼져있으면 아예 실행 차단
-    if (!isEngineActive) {
-        alert("엔진을 먼저 활성화해주세요.");
-        return;
-    }
-
-    // 2. 화면 전환 실행
+    if (!isEngineActive) return alert("엔진을 먼저 활성화해주세요.");
     switchView(view);
 }
 
-/**
- * [수정] 네비게이션 버튼 UI 상태 업데이트 (Active 클래스 관리)
- */
-function updateNavUI(view) {
-    // 모든 버튼에서 active 클래스 제거
-    const btns = document.querySelectorAll('.nav-btn');
-    btns.forEach(btn => btn.classList.remove('active'));
+function switchView(view) {
+    const mainEl = document.getElementById('main-blanket');
+    if (!mainEl) return;
 
-    // 현재 선택된 뷰에 해당하는 버튼에만 active 클래스 추가
-    const activeBtn = document.getElementById(`btn-${view}`);
-    if (activeBtn) {
-        activeBtn.classList.add('active');
+    updateNavUI(view);
+
+    if (view === 'phone') {
+        mainEl.innerHTML = `
+            <div id="phone-interface" class="view-fade">
+                <h2 class="auth-title">📞 DIALER</h2>
+                <div class="auth-box" style="margin: 0 auto;">
+                    <input type="text" id="dial-number" placeholder="ID 입력" readonly class="neo-input">
+                    <div class="button-group">
+                        <button onclick="appendNum('1')" class="neo-btn">1</button>
+                        <button onclick="appendNum('2')" class="neo-btn">2</button>
+                        <button onclick="appendNum('3')" class="neo-btn">3</button>
+                    </div>
+                    <button onclick="makeCall()" class="call-btn">통화 시작</button>
+                </div>
+            </div>`;
+    } else if (view === 'ptt') {
+        mainEl.innerHTML = `
+            <div id="ptt-interface" class="view-fade">
+                <h2 class="auth-title">📻 Push-To-Talk</h2>
+                <div class="auth-box">
+                    <div id="ptt-status">대기 중...</div>
+                    <button id="ptt-btn" class="p-trig" onmousedown="startPTT()" onmouseup="stopPTT()" ontouchstart="startPTT()" ontouchend="stopPTT()">📻</button>
+                    <p style="margin-top:10px; font-size:12px; color:#888;">버튼을 누르는 동안 송신합니다</p>
+                </div>
+            </div>`;
+    } else if (view === 'chat') {
+        mainEl.innerHTML = `
+            <div id="chat-interface" class="view-fade">
+                <h2 class="auth-title">💬 실시간 문자</h2>
+                <div id="chat-logs" class="chat-display"></div>
+                <div class="chat-input-row">
+                    <input type="text" id="msg-input" placeholder="메시지 입력..." onkeypress="handleChatKey(event)">
+                    <button onclick="sendMessage()" class="send-btn">전송</button>
+                </div>
+            </div>`;
     }
 }
 
+function updateNavUI(view) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById(`btn-${view}`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
 
+/* ==========================================
+   4. 세부 기능 핸들러
+   ========================================== */
 
-
-// 뷰 전환 시 부드러운 효과를 위한 최소한의 스타일
-const style = document.createElement('style');
-style.textContent = `
-    .view-fade { animation: fadeIn 0.4s ease-out; width: 100%; text-align: center; }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(5px); }
-        to { opacity: 1; transform: translateY(0); }
+// --- [전화 기능] ---
+function appendNum(num) {
+    const dialInput = document.getElementById('dial-number');
+    if (dialInput) {
+        dialInput.value += num;
+        if (navigator.vibrate) navigator.vibrate(30); 
     }
-`;
-document.head.appendChild(style);
+}
+
+async function makeCall() {
+    const targetId = document.getElementById('dial-number').value;
+    if (!targetId) return alert("ID를 입력하세요.");
+
+    console.log(`📡 [RTC] ${targetId}에게 연결 시도...`);
+
+    try {
+        if (!localStream) {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+        
+        const call = peer.call(targetId, localStream);
+        
+        call.on('stream', (remoteStream) => {
+            console.log("🔊 상대방 음성 수신 성공!");
+            playRemoteAudio(remoteStream);
+        });
+
+        socket.emit('call-request', { from: myPeerId, to: targetId });
+    } catch (err) {
+        console.error("마이크 접근 실패:", err);
+        alert("마이크 권한이 필요합니다.");
+    }
+}
+
+function playRemoteAudio(stream) {
+    let audio = document.getElementById('remote-audio-el');
+    if(!audio) {
+        audio = document.createElement('audio');
+        audio.id = 'remote-audio-el';
+        document.body.appendChild(audio);
+    }
+    audio.srcObject = stream;
+    audio.play();
+}
+
+// --- [무전 기능] ---
+function startPTT() {
+    if (!isEngineActive) return;
+    console.log("🎤 무전 송신 시작...");
+    const status = document.getElementById('ptt-status');
+    status.innerText = "송신 중!!";
+    status.style.color = "#ff4444";
+    socket.emit('ptt-start', { id: myPeerId, room: 'DEFAULT_ROOM' });
+}
+
+function stopPTT() {
+    console.log("📴 무전 송신 종료");
+    const status = document.getElementById('ptt-status');
+    status.innerText = "대기 중...";
+    status.style.color = "inherit";
+    socket.emit('ptt-stop', { id: myPeerId, room: 'DEFAULT_ROOM' });
+}
+
+// --- [문자 기능] ---
+function sendMessage() {
+    const input = document.getElementById('msg-input');
+    if (!input || !input.value.trim()) return;
+
+    socket.emit('chat-msg', {
+        user: "User_" + (myPeerId ? myPeerId.substring(0,4) : "Anon"),
+        text: input.value.trim(),
+        time: new Date().toLocaleTimeString()
+    });
+    input.value = '';
+}
+
+function handleChatKey(e) { if (e.key === 'Enter') sendMessage(); }
+
+socket.on('receive-msg', (data) => {
+    const chatLogs = document.getElementById('chat-logs');
+    if (chatLogs) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = "msg-item";
+        msgDiv.innerHTML = `<strong>${data.user}:</strong> ${data.text} <span class="msg-time">${data.time}</span>`;
+        chatLogs.appendChild(msgDiv);
+        chatLogs.scrollTop = chatLogs.scrollHeight;
+    }
+});
