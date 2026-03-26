@@ -1,11 +1,10 @@
 /* ==========================================================
-   🍎 SYSTEM CORE & MIDDLEWARE
+   🍎 SPIRIT v5.2 HYBRID SERVER ENGINE
    ========================================================== */
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const { ExpressPeerServer } = require('peer');
-const fs = require('fs');
 const path = require('path');
 const os = require('os');
 require('dotenv').config();
@@ -14,98 +13,88 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, { 
     cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 // 10MB까지 허용 (음성 파일 대응)
+    maxHttpBufferSize: 1e7 // 10MB (음성 데이터 대응)
 });
 
-// 녹음 디렉토리 초기화
-const recDir = path.join(__dirname, 'recordings');
-if (!fs.existsSync(recDir)) fs.mkdirSync(recDir);
-
-// RTC 및 정적 파일 서버 설정
+// 1. PeerJS 서버 설정 (P2P 음성 통신용)
 const peerServer = ExpressPeerServer(server, { debug: false, path: '/' });
 app.use('/peerjs', peerServer);
 app.use(express.static(path.join(__dirname, 'public')));
 
+// [권한 데이터] - 필요시 DB 연동 가능
+const USER_MODES = {
+    'DEV_MASTER': { text: "관리자 모드", pw: '1234' },
+    'GUEST_USER': { text: "게스트 모드", pw: '0000' }
+};
+
 /* ==========================================================
-   🍇 SOCKET.IO HUB (이벤트 통합 관리)
+   🍇 SOCKET.IO HUB (실시간 이벤트 중계)
    ========================================================== */
 io.on('connection', (socket) => {
     const userId = socket.id.substring(0, 5);
     console.log(`📡 [CONN] User Connected: ${userId}`);
 
-    // [1] 방 입장 로직
-    socket.on('join-room', (roomId) => {
-        if(!roomId) roomId = 'DEFAULT_ROOM';
-        socket.join(roomId);
-        socket.myRoom = roomId;
-        console.log(`🏠 [ROOM] ${userId} -> ${roomId}`);
+    // [1] 인증 및 방 입장 (클라이언트 App.activate와 연동)
+    socket.on('join_room', (data) => {
+        const { modeId, userPw, peerId } = data;
+        const modeData = USER_MODES[modeId];
+
+        if (modeData && userPw === modeData.pw) {
+            socket.join(modeId);
+            socket.myRoom = modeId;
+            socket.peerId = peerId;
+
+            // 인증 성공 응답 및 기존 인원에게 알림
+            socket.emit('oi_response', { success: true, text: `${modeData.text} 접속` });
+            socket.to(modeId).emit('user-connected', peerId);
+            console.log(`✅ [AUTH] ${userId} -> Room: ${modeId}`);
+        } else {
+            socket.emit('oi_response', { success: false, text: "❌ 인증 실패" });
+        }
     });
 
-    // [2] PTT / 실시간 음성 통제
+    // [2] PTT 상태 중계 (누구의 마이크가 켜졌는지 알림)
     socket.on('ptt-start', (data) => {
-        console.log(`🎤 [TX] Start: ${userId}`);
+        if (!socket.myRoom) return;
         socket.to(socket.myRoom).emit('ptt-receiving', { id: data.id });
     });
 
     socket.on('ptt-stop', () => {
-        console.log(`🔇 [TX] Stop: ${userId}`);
+        if (!socket.myRoom) return;
         socket.to(socket.myRoom).emit('ptt-stopped');
     });
 
-    // [3] 오디오 동기화 및 서버 저장 (안정성 강화 버전)
+    // [3] 음성 데이터 스트리밍/파일 중계
     socket.on('sync-audio-file', (data) => {
-        try {
-            if (!data.blob || !socket.myRoom) return;
-
-            // 클라이언트로 즉시 중계
-            socket.to(socket.myRoom).emit('receive-sync-audio', {
-                blob: data.blob,
-                id: userId
-            });
-
-            // 바이너리 데이터 변환 처리
-            const audioBuffer = Buffer.isBuffer(data.blob) ? data.blob : Buffer.from(data.blob);
-
-            // 파일명에 시간/사용자 정보 포함
-            const fileName = `rec_${socket.myRoom}_${userId}_${Date.now()}.webm`;
-            const filePath = path.join(recDir, fileName);
-            
-            fs.writeFile(filePath, audioBuffer, (err) => {
-                if (err) {
-                    console.error(`❌ [SAVE_ERR] ${fileName}:`, err);
-                } else {
-                    console.log(`💾 [SAVE] ${fileName} (${(audioBuffer.length/1024).toFixed(1)}KB)`);
-                }
-            });
-        } catch (error) {
-            console.error("⚠️ [SYNC_ERR] Audio Processing Failed:", error);
-        }
+        if (!socket.myRoom || !data.blob) return;
+        
+        // 서버 저장 로직 제거 (속도와 용량 최적화): 클라이언트간 즉시 중계만 수행
+        socket.to(socket.myRoom).emit('receive-sync-audio', {
+            blob: data.blob,
+            id: userId
+        });
     });
 
     socket.on('disconnect', () => {
+        if (socket.myRoom && socket.peerId) {
+            socket.to(socket.myRoom).emit('user-disconnected', socket.peerId);
+        }
         console.log(`🔌 [DISCONN] ${userId}`);
     });
 });
 
 /* ==========================================================
-   🍓 NETWORK BOOTSTRAP
+   🍓 NETWORK BOOTSTRAP (IP 확인용)
    ========================================================== */
-function getLocalIP() {
-    const interfaces = os.networkInterfaces();
-    for (const name in interfaces) {
-        for (const iface of interfaces[name]) {
-            if (iface.family === 'IPv4' && !iface.internal) return iface.address;
-        }
-    }
-    return '127.0.0.1';
-}
-
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
-    const ip = getLocalIP();
-    console.log(`\n` + "=".repeat(50));
-    console.log(`🚀 SPIRIT v5.2 ENGINE ONLINE`);
-    console.log(`🔗 Local:   http://localhost:${PORT}`);
-    console.log(`📱 Mobile:  http://${ip}:${PORT}`);
-    console.log("=".repeat(50) + `\n`);
+    const interfaces = os.networkInterfaces();
+    let ip = '127.0.0.1';
+    for (const name in interfaces) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) ip = iface.address;
+        }
+    }
+    console.log(`\n🚀 SPIRIT v5.2 HYBRID ENGINE ONLINE`);
+    console.log(`🔗 Local: http://localhost:${PORT} | Mobile: http://${ip}:${PORT}\n`);
 });
