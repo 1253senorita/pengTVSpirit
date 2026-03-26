@@ -1,0 +1,12 @@
+# Dependency
+node_modules/
+dist/
+.DS_Store
+
+# Env & Secret
+.env
+*.log
+
+# Editor
+.vscode/
+.idea/
