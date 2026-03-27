@@ -4,21 +4,23 @@
     <meta charset="UTF-8">
     <title>Blackboard Engine [💎Blueberry & 🍇Grape]</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        :root { --bsf-color: #d63031; --ssf-color: #f1c40f; --bg: #f8f9fa; --dark: #2d3436; }
+        :root { --bsf-color: #d63031; --ssf-color: #f1c40f; --bg: #f8f9fa; --dark: #2d3436; --blue: #74b9ff; --green: #00b894; --purple: #a29bfe; }
         body { font-family: 'Pretendard', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
         .BSF_Left_Zone { width: 350px; background: white; border-right: 2px solid #eee; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
         .SSF_Right_Zone { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; background: #fdfdfd; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
         .log-box { flex: 1; background: var(--dark); color: #74b9ff; padding: 10px; border-radius: 8px; font-family: monospace; overflow-y: auto; font-size: 0.85rem; }
-        .shell-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--dark); display: flex; justify-content: center; gap: 50px; align-items: center; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; background: #eee; }
-        /* 뉴모피즘 스타일 추가 */
-        .neumorphism-btn { 
-            background: #f8f9fa; border: none; padding: 10px 20px; border-radius: 10px; 
-            box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #ffffff; cursor: pointer; transition: 0.2s;
-        }
-        .neumorphism-btn:active { box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff; }
+        .shell-bar { position: fixed; bottom: 0; width: 100%; height: 80px; background: var(--dark); display: flex; justify-content: center; gap: 20px; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; background: #eee; margin-right: 5px; }
+        .count-mark { background: var(--purple); color: white; }
+        .peer-input-wrapper { display: flex; flex-direction: column; gap: 5px; }
+        .peer-input { background: rgba(255,255,255,0.1); border: 1px solid var(--blue); color: white; padding: 8px 12px; border-radius: 8px; width: 150px; outline: none; font-family: monospace; }
+        .neumorphism-btn { background: #f8f9fa; border: none; padding: 12px 24px; border-radius: 12px; box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #ffffff; cursor: pointer; transition: 0.2s; font-weight: bold; }
+        .neumorphism-btn:active { box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff; transform: scale(0.98); }
+        .pulse { animation: shadow-pulse 1.5s infinite; }
+        @keyframes shadow-pulse { 0% { box-shadow: 0 0 0 0px rgba(116, 185, 255, 0.4); } 100% { box-shadow: 0 0 0 15px rgba(116, 185, 255, 0); } }
     </style>
 </head>
 <body>
@@ -27,6 +29,8 @@
         <div>
             <h2>🍎 BSF Control</h2>
             <div id="SSF_Status_Badge" class="badge">SYSTEM IDLE</div>
+            <div id="Total_Traffic_Mark" class="badge count-mark">TRAFFIC: 0</div>
+            <div id="My_ID_Display" style="margin-top:10px; font-size:0.85rem; color:var(--blue); font-weight:bold;">ID 생성 중...</div>
         </div>
         <div style="flex:1; display:flex; flex-direction:column;">
             <h2>🍎 BSF Logs</h2>
@@ -35,11 +39,7 @@
     </aside>
 
     <main class="SSF_Right_Zone">
-        <div id="SSF_Peer_Layer" style="display:none;" class="card">
-            <h4 style="margin:0; color:#00b894;">💛 SSF: Remote Peer Connected</h4>
-            <div id="SSF_Peer_Info" style="font-family: monospace;"></div>
-        </div>
-        <div class="card" style="margin-top: 20px; flex: 1;">
+        <div id="Main_Display_Card" class="card" style="margin-top: 20px; flex: 1;">
             <h2>💛 SSF Shared Memory</h2>
             <div id="SSF_Dynamic_Sheet">
                 <p>💛 SSF: 명령 대기 중...</p>
@@ -48,96 +48,151 @@
     </main>
 
     <footer class="shell-bar" id="A-Area">
-        <button data-ref="SENSOR_301" class="neumorphism-btn">🍎 🍎🍎🍎🍎센서 분석</button>
-        <button data-ref="PTT_101" class="neumorphism-btn" style="color:#74b9ff;">🍎🍎🍎 🍎🍎PTT 통신</button>
+        <div class="peer-input-wrapper">
+            <label style="color:var(--blue); font-size:0.7rem; font-weight:bold;">TARGET PEER ID</label>
+            <input type="text" id="Target_Peer_ID" class="peer-input" placeholder="ID 입력...">
+        </div>
+        <input type="text" id="Msg_Content" class="peer-input" style="width:250px;" placeholder="보낼 메시지 입력...">
+        <button id="Send_Msg_Btn" class="neumorphism-btn" style="color:var(--green);">✉️ 문자 전송</button>
+        <button data-ref="PTT_101" class="neumorphism-btn" style="color:var(--blue);">🍇 PTT <span id="Count_PTT">0</span></button>
+        <button data-ref="PHONE_202" class="neumorphism-btn" style="color:var(--green);">📞 전화 <span id="Count_Phone">0</span></button>
     </footer>
 
-    <script>
-        const { BehaviorSubject } = rxjs;
+<script>
+    const { BehaviorSubject } = rxjs;
 
-        // 1. 데이터 저장소 (보안을 위해 스크립트 내부에 정의)
-        const ActionRegistry = {
-            "SENSOR_301": { id: 301, name: "Target-Alpha", score: 99, mode: "SCAN" },              //🍎🍎🍎 🍎🍎
-            "PTT_101": { id: 101, name: "PTT-Channel-01", score: 100, mode: "VOICE" }            //🍎🍎🍎 🍎🍎
-        };
+    const Stats = {
+        traffic: 0, ptt: 0, phone: 0,
+        up(type) {
+            this.traffic++;
+            if(type) this[type]++;
+            this.render();
+        },
+        render() {
+            document.getElementById('Total_Traffic_Mark').innerText = `TRAFFIC: ${this.traffic}`;
+            document.getElementById('Count_PTT').innerText = this.ptt;
+            document.getElementById('Count_Phone').innerText = this.phone;
+        }
+    };
 
-        class SpiritEngine {
-            constructor() {
-                this.state$ = new BehaviorSubject({ status: 'IDLE', logs: [], data: [], peer: null });
-            }
-
-            update(patch) { 
-                this.state$.next({ ...this.state$.getValue(), ...patch }); 
-            }
-
-            log(msg) {
-                const current = this.state$.getValue();
-                const time = `[${new Date().toLocaleTimeString()}]`;
-                this.state$.next({ ...current, logs: [`<div>${time} ${msg}</div>`, ...current.logs] });
-            }
+    class SpiritEngine {
+        constructor() {
+            this.state$ = new BehaviorSubject({ 
+                status: 'IDLE', logs: [], comm: { active: false, target: null, type: null, msg: '' } 
+            });
+            this.cachedStream = null;
+            this.activeConn = null;
+            // ✅ 오빠 서버 설정 반영
+            this.peerOptions = { host: 'localhost', port: 9000, path: '/myapp', key: 'peerjs', debug: 3 };
+            this.initPeer("WIKI-ROUTER-MASTER-OPPA", this.peerOptions);
         }
 
-        const engine = new SpiritEngine();
+        initPeer(targetId, options) {
+            this.peer = new Peer(targetId, options);
+            this.peer.on('open', (id) => {
+                this.myId = id;
+                document.getElementById('My_ID_Display').innerText = `📡 LIVE ID: ${this.myId}`;
+                this.log(`🚀 [SYSTEM] ${this.myId === "WIKI-ROUTER-MASTER-OPPA" ? "MASTER" : "GUEST"} 가동`);
+                if (this.myId !== "WIKI-ROUTER-MASTER-OPPA") this.connectToPeer("WIKI-ROUTER-MASTER-OPPA");
+            });
 
-        // 🍇 수신부 로직 (B 시트 업데이트)
-        engine.state$.subscribe(state => {
-            document.getElementById('BSF_Log_Console').innerHTML = state.logs.join('');
-            const sheet = document.getElementById('SSF_Dynamic_Sheet');
-            const statusBadge = document.getElementById('SSF_Status_Badge');
-            
-            statusBadge.innerText = `SYSTEM ${state.status}`;
+            this.peer.on('connection', (conn) => this.setupChannel(conn));
 
-            if (state.status === 'VOICE_ACTIVE') {
-                sheet.innerHTML = `<h3>🎙️ 💛 SSF: 보이스 실시간 세션</h3><p>채널 점유 중... (ID: ${state.activeId})</p>`;
-            } else if (state.data.length > 0) {
-                let html = `<h3>📊 💛 SSF: 데이터 분석 리포트</h3><table border="1" width="100%" style="border-collapse:collapse;">`;
-                html += `<thead><tr><th>TARGET NAME</th><th>SCORE</th></tr></thead><tbody>`;
-                html += state.data.map(d => `<tr><td>${d.name}</td><td>${d.score}</td></tr>`).join('');
-                sheet.innerHTML = html + `</tbody></table>`;
-            } else {
-                sheet.innerHTML = `<p>💛 SSF: 현재 활성화된 데이터 시트가 없습니다.</p>`;
-            }
-
-            const peerLayer = document.getElementById('SSF_Peer_Layer');
-            if (state.peer) {
-                peerLayer.style.display = 'block';
-                document.getElementById('SSF_Peer_Info').innerText = state.peer;
-            } else {
-                peerLayer.style.display = 'none';
-            }
-        });
-//
-        // 🚀 🚀통합 이벤트 리스너: A-Area의🚀🚀 버튼 클릭 감지🚀🚀                                  //  🍎🍎🍎 🍎🍎
-        document.getElementById('A-Area').addEventListener('click', (e) => {                              //🍎🍎🍎 🍎🍎
-            const refKey = e.target.dataset.ref;
-            
-            if (refKey && ActionRegistry[refKey]) {
-                const payload = ActionRegistry[refKey];
-                handleSmartTrigger(payload);
-            }
-        });
-
-        // 💎 공통 핸들러: 데이터 분석 및 PTT 분기 처리
-        function handleSmartTrigger(data) {
-            if (data.mode === "SCAN") {
-                engine.log(`🍎 BSF: [${data.name}] 분석 시작 (코드:${data.id})`);
-                engine.update({ status: 'PROCESSING', data: [data] });
-                
-                setTimeout(() => {
-                    engine.log("💛 SSF: 분석 완료 및 결과 업로드");
-                    engine.update({ status: 'COMPLETED', peer: `Node-${data.id}-Active` });
-                }, 1200);
-
-            } else if (data.mode === "VOICE") {
-                engine.log(`🍎 BSF: ${data.name} 채널 오픈`);
-                engine.update({ status: 'VOICE_ACTIVE', activeId: data.id, peer: null });
-                
-                setTimeout(() => {
-                    engine.update({ status: 'IDLE' });
-                    engine.log("🍎 BSF: PTT 세션 종료");
-                }, 3000);
-            }
+            this.peer.on('call', async (call) => {
+                Stats.up('phone');
+                this.log(`📞 [VOICE] ${call.peer} 수신`);
+                const stream = await this.getMicStream();
+                if(stream) {
+                    call.answer(stream);
+                    call.on('stream', (rms) => {
+                        this.playRemoteStream(rms);
+                        this.update({ status: 'IN_CALL', comm: { active: true, type: 'PHONE', target: call.peer } });
+                    });
+                }
+            });
         }
-    </script>
+
+        setupChannel(conn) {
+            this.activeConn = conn;
+            conn.on('open', () => {
+                this.log(`✅ 연결 성공: ${conn.peer}`);
+                this.update({ status: 'CONNECTED' });
+            });
+            conn.on('data', (data) => {
+                Stats.up();
+                this.log(`📩 수신[${conn.peer}]: ${data}`);
+                this.update({ status: 'DATA_RECEIVED', comm: { active: true, type: 'TEXT', target: conn.peer, msg: data } });
+            });
+            conn.on('close', () => {
+                this.log("📭 연결 종료");
+                this.activeConn = null;
+                this.update({ status: 'IDLE', comm: { active: false } });
+            });
+        }
+
+        async getMicStream() {
+            if (this.cachedStream?.active) return this.cachedStream;
+            try { return this.cachedStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+            catch { return null; }
+        }
+
+        playRemoteStream(stream) { 
+            const audio = new Audio(); audio.srcObject = stream; 
+            audio.play().catch(() => this.log("⚠️ 오디오 활성화 필요"));
+        }
+
+        update(patch) { this.state$.next({ ...this.state$.getValue(), ...patch }); }
+        
+        log(msg) {
+            const time = `[${new Date().toLocaleTimeString()}]`;
+            this.update({ logs: [`<div>${time} ${msg}</div>`, ...this.state$.getValue().logs] });
+        }
+
+        connectToPeer(id) { this.setupChannel(this.peer.connect(id)); }
+    }
+
+    const engine = new SpiritEngine();
+
+    engine.state$.subscribe(state => {
+        document.getElementById('BSF_Log_Console').innerHTML = state.logs.join('');
+        document.getElementById('SSF_Status_Badge').innerText = `SYSTEM ${state.status}`;
+        const sheet = document.getElementById('SSF_Dynamic_Sheet');
+        if (state.comm.active) {
+            document.getElementById('Main_Display_Card').className = "card pulse";
+            sheet.innerHTML = state.comm.type === 'TEXT' 
+                ? `<div style="text-align:center;"><h2>✉️ DATA</h2><p>"${state.comm.msg}"</p><button onclick="resetComm()" class="neumorphism-btn">확인</button></div>`
+                : `<div style="text-align:center;"><h1>🎙️</h1><p>통신 중: ${state.comm.target}</p><button onclick="resetComm()" class="neumorphism-btn" style="color:red;">종료</button></div>`;
+        } else {
+            document.getElementById('Main_Display_Card').className = "card";
+            sheet.innerHTML = `<p>💛 SSF: 명령 대기 중...</p>`;
+        }
+    });
+
+    document.getElementById('Send_Msg_Btn').addEventListener('click', () => {
+        const msg = document.getElementById('Msg_Content').value;
+        if (engine.activeConn && msg) {
+            engine.activeConn.send(msg);
+            Stats.up();
+            engine.log(`📤 송신: ${msg}`);
+            document.getElementById('Msg_Content').value = '';
+        }
+    });
+
+    document.getElementById('A-Area').addEventListener('click', async (e) => {
+        const ref = e.target.dataset.ref || e.target.parentElement.dataset.ref;
+        if (!ref) return;
+        const targetId = document.getElementById('Target_Peer_ID').value || (engine.activeConn ? engine.activeConn.peer : null);
+        if (!targetId) return alert("ID 입력!");
+        if(ref === 'PTT_101') Stats.up('ptt');
+        if(ref === 'PHONE_202') Stats.up('phone');
+        const stream = await engine.getMicStream();
+        if (stream) {
+            engine.peer.call(targetId, stream);
+            engine.update({ status: 'CONNECTING', comm: { active: true, type: ref === 'PTT_101' ? 'PTT' : 'PHONE', target: targetId } });
+        }
+    });
+
+    function resetComm() { engine.update({ status: 'CONNECTED', comm: { active: false } }); }
+</script>
 </body>
 </html>
