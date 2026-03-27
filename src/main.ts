@@ -90,22 +90,6 @@ pengBB.subscribe((state) => {
     }
 });
 
-/* 펭TV 하단 앱쉘 스타일 예시 */
-.app-shell-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    background: #2d3436; /* 펭TV 다크톤 */
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    z-index: 9999; /* 최상단 블랭킷 */
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
-}
-
-
 // --- 실제 구동 시나리오 ---
 
 console.log("\n🚀 [시작] 오빠가 화면에서 '데이터_시트.csv'를 업로드합니다.");

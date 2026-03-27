@@ -2,174 +2,142 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Blackboard Engine v5.2 Spirit</title>
+    <title>Blackboard Engine [💎Blueberry & 🍇Grape]</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
     <style>
-        :root { --bg: #f8f9fa; --card: #ffffff; --primary: #0984e3; --dark: #2d3436; --accent: #fab1a0; }
-        
-        body { 
-            font-family: 'Pretendard', sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            padding: 20px; 
-            padding-bottom: 100px; /* 하단바 공간 확보 */
-            display: flex; 
-            gap: 20px; 
-            height: 100vh;
-            box-sizing: border-box;
+        :root { --bsf-color: #d63031; --ssf-color: #f1c40f; --bg: #f8f9fa; --dark: #2d3436; }
+        body { font-family: 'Pretendard', sans-serif; background: var(--bg); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        .BSF_Left_Zone { width: 350px; background: white; border-right: 2px solid #eee; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .SSF_Right_Zone { flex: 1; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; background: #fdfdfd; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .log-box { flex: 1; background: var(--dark); color: #74b9ff; padding: 10px; border-radius: 8px; font-family: monospace; overflow-y: auto; font-size: 0.85rem; }
+        .shell-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: var(--dark); display: flex; justify-content: center; gap: 50px; align-items: center; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; background: #eee; }
+        /* 뉴모피즘 스타일 추가 */
+        .neumorphism-btn { 
+            background: #f8f9fa; border: none; padding: 10px 20px; border-radius: 10px; 
+            box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #ffffff; cursor: pointer; transition: 0.2s;
         }
-
-        /* 시트 레이어 (중앙 콘텐츠) */
-        .panel { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); flex: 1; overflow-y: auto; }
-        h2 { margin-top: 0; font-size: 1.2rem; color: var(--dark); border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
-        
-        /* 상태 표시기 */
-        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 15px; }
-        .IDLE { background: #dfe6e9; color: #636e72; }
-        .PROCESSING { background: #ffeaa7; color: #d63031; animation: pulse 1.5s infinite; }
-        .COMPLETED { background: #55efc4; color: #00b894; }
-
-        /* 로그창 */
-        #log-container { height: 200px; overflow-y: auto; background: var(--dark); color: var(--accent); padding: 10px; font-family: monospace; font-size: 0.9rem; border-radius: 8px; }
-        .log-entry { margin-bottom: 4px; border-left: 2px solid #e17055; padding-left: 8px; }
-
-        /* 테이블 */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #eee; }
-        
-        /* [앱쉘 레이어] 하단 펭TV 바 - 시트 위에 떠 있는 블랭킷 */
-        .app-shell-bottom {
-            position: fixed;
-            bottom: 0; left: 0; width: 100%; height: 85px;
-            background: var(--dark);
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            z-index: 9999;
-            box-shadow: 0 -8px 20px rgba(0,0,0,0.4);
-        }
-
-        /* 뉴모피즘 버튼 스타일 */
-        .shell-btn {
-            background: var(--dark); 
-            color: var(--accent); 
-            border: none;
-            padding: 14px 28px;
-            border-radius: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 5px 5px 10px #1e2223, -5px -5px 10px #3c4649;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .shell-btn:hover { color: white; transform: translateY(-2px); }
-        .shell-btn:active {
-            box-shadow: inset 5px 5px 10px #1e2223, inset -5px -5px 10px #3c4649;
-            transform: translateY(0);
-        }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .neumorphism-btn:active { box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff; }
     </style>
 </head>
 <body>
 
-    <div class="panel" style="max-width: 350px;">
-        <h2>🕹️ Engine Control</h2>
-        <div id="status-display" class="status-badge IDLE">SYSTEM IDLE</div>
-        <p style="font-size: 0.85rem; color: #636e72;">하단 펭TV 바의 입체 버튼을 눌러보세요!</p>
-        
-        <h2 style="margin-top:20px;">📜 Blackboard Logs</h2>
-        <div id="log-container"></div>
-    </div>
-
-    <div class="panel">
-        <h2>🧠 Blackboard Shared Memory</h2>
-        <div id="data-view">
-            <p style="color: #636e72;">데이터가 대기 중입니다...</p>
+    <aside class="BSF_Left_Zone">
+        <div>
+            <h2>🍎 BSF Control</h2>
+            <div id="SSF_Status_Badge" class="badge">SYSTEM IDLE</div>
         </div>
-    </div>
+        <div style="flex:1; display:flex; flex-direction:column;">
+            <h2>🍎 BSF Logs</h2>
+            <div id="BSF_Log_Console" class="log-box"></div>
+        </div>
+    </aside>
 
-    <div class="app-shell-bottom">
-        <button class="shell-btn" onclick="triggerSensor()">
-            <span>📡</span> 센서 데이터 분석 (301)
-        </button>
-        <button class="shell-btn" style="color: #74b9ff;" onclick="alert('PTT 시작!')">
-            <span>🎙️</span> PTT 통신 (101)
-        </button>
-    </div>
+    <main class="SSF_Right_Zone">
+        <div id="SSF_Peer_Layer" style="display:none;" class="card">
+            <h4 style="margin:0; color:#00b894;">💛 SSF: Remote Peer Connected</h4>
+            <div id="SSF_Peer_Info" style="font-family: monospace;"></div>
+        </div>
+        <div class="card" style="margin-top: 20px; flex: 1;">
+            <h2>💛 SSF Shared Memory</h2>
+            <div id="SSF_Dynamic_Sheet">
+                <p>💛 SSF: 명령 대기 중...</p>
+            </div>
+        </div>
+    </main>
 
-<script>
-    const { BehaviorSubject, filter, delay } = rxjs;
+    <footer class="shell-bar" id="A-Area">
+        <button data-ref="SENSOR_301" class="neumorphism-btn">🍎 🍎🍎🍎🍎센서 분석</button>
+        <button data-ref="PTT_101" class="neumorphism-btn" style="color:#74b9ff;">🍎🍎🍎 🍎🍎PTT 통신</button>
+    </footer>
 
-    // --- 1. Blackboard (심장) ---
-    class Blackboard {
-        constructor() {
-            this.state$ = new BehaviorSubject({
-                status: 'IDLE',
-                rawData: [],
-                processedData: [],
-                logs: ["Spirit 엔진이 가동되었습니다."]
-            });
+    <script>
+        const { BehaviorSubject } = rxjs;
+
+        // 1. 데이터 저장소 (보안을 위해 스크립트 내부에 정의)
+        const ActionRegistry = {
+            "SENSOR_301": { id: 301, name: "Target-Alpha", score: 99, mode: "SCAN" },              //🍎🍎🍎 🍎🍎
+            "PTT_101": { id: 101, name: "PTT-Channel-01", score: 100, mode: "VOICE" }            //🍎🍎🍎 🍎🍎
+        };
+
+        class SpiritEngine {
+            constructor() {
+                this.state$ = new BehaviorSubject({ status: 'IDLE', logs: [], data: [], peer: null });
+            }
+
+            update(patch) { 
+                this.state$.next({ ...this.state$.getValue(), ...patch }); 
+            }
+
+            log(msg) {
+                const current = this.state$.getValue();
+                const time = `[${new Date().toLocaleTimeString()}]`;
+                this.state$.next({ ...current, logs: [`<div>${time} ${msg}</div>`, ...current.logs] });
+            }
         }
-        update(patch) {
-            const current = this.state$.getValue();
-            this.state$.next({ ...current, ...patch });
-        }
-        addLog(msg) {
-            const current = this.state$.getValue();
-            const time = new Date().toLocaleTimeString();
-            this.state$.next({ ...current, logs: [`[${time}] ${msg}`, ...current.logs] });
-        }
-        get stream() { return this.state$.asObservable(); }
-    }
 
-    const bb = new Blackboard();
+        const engine = new SpiritEngine();
 
-    // --- 2. 전문가 (Knowledge Source) ---
-    bb.stream.pipe(
-        filter(s => s.status === 'PROCESSING'),
-        delay(1500)
-    ).subscribe(state => {
-        const filtered = state.rawData.filter(d => d.score >= 80);
-        bb.addLog("분석 전문가: 필터링 및 리포트 생성 완료.");
-        bb.update({ status: 'COMPLETED', processedData: filtered });
-    });
+        // 🍇 수신부 로직 (B 시트 업데이트)
+        engine.state$.subscribe(state => {
+            document.getElementById('BSF_Log_Console').innerHTML = state.logs.join('');
+            const sheet = document.getElementById('SSF_Dynamic_Sheet');
+            const statusBadge = document.getElementById('SSF_Status_Badge');
+            
+            statusBadge.innerText = `SYSTEM ${state.status}`;
 
-    // --- 3. UI 렌더러 ---
-    bb.stream.subscribe(state => {
-        document.getElementById('status-display').innerText = `SYSTEM ${state.status}`;
-        document.getElementById('status-display').className = `status-badge ${state.status}`;
+            if (state.status === 'VOICE_ACTIVE') {
+                sheet.innerHTML = `<h3>🎙️ 💛 SSF: 보이스 실시간 세션</h3><p>채널 점유 중... (ID: ${state.activeId})</p>`;
+            } else if (state.data.length > 0) {
+                let html = `<h3>📊 💛 SSF: 데이터 분석 리포트</h3><table border="1" width="100%" style="border-collapse:collapse;">`;
+                html += `<thead><tr><th>TARGET NAME</th><th>SCORE</th></tr></thead><tbody>`;
+                html += state.data.map(d => `<tr><td>${d.name}</td><td>${d.score}</td></tr>`).join('');
+                sheet.innerHTML = html + `</tbody></table>`;
+            } else {
+                sheet.innerHTML = `<p>💛 SSF: 현재 활성화된 데이터 시트가 없습니다.</p>`;
+            }
 
-        const logBox = document.getElementById('log-container');
-        logBox.innerHTML = state.logs.map(l => `<div class="log-entry">${l}</div>`).join('');
-
-        const view = document.getElementById('data-view');
-        if (state.status === 'IDLE') {
-            view.innerHTML = `<p>데이터를 유입시키려면 하단 분석 버튼을 누르세요.</p>`;
-        } else {
-            const data = state.status === 'COMPLETED' ? state.processedData : state.rawData;
-            let html = `<h3>${state.status === 'COMPLETED' ? '✅ 분석 결과 리포트' : '⏳ 데이터 분석 전문가 가동 중...'}</h3>`;
-            html += `<table><thead><tr><th>이름</th><th>점수</th></tr></thead><tbody>`;
-            html += data.map(d => `<tr><td>${d.name}</td><td>${d.score}</td></tr>`).join('');
-            html += `</tbody></table>`;
-            view.innerHTML = html;
-        }
-    });
-
-    // 브릿지 함수
-    function triggerSensor() {
-        bb.addLog("Bridge: ID 301 인텐트 수신.");
-        bb.update({
-            status: 'PROCESSING',
-            rawData: [
-                { name: '펭수', score: 98 }, { name: '범이', score: 75 },
-                { name: '스피릿', score: 88 }, { name: '플라이', score: 60 }
-            ]
+            const peerLayer = document.getElementById('SSF_Peer_Layer');
+            if (state.peer) {
+                peerLayer.style.display = 'block';
+                document.getElementById('SSF_Peer_Info').innerText = state.peer;
+            } else {
+                peerLayer.style.display = 'none';
+            }
         });
-    }
-</script>
+//
+        // 🚀 🚀통합 이벤트 리스너: A-Area의🚀🚀 버튼 클릭 감지🚀🚀                                  //  🍎🍎🍎 🍎🍎
+        document.getElementById('A-Area').addEventListener('click', (e) => {                              //🍎🍎🍎 🍎🍎
+            const refKey = e.target.dataset.ref;
+            
+            if (refKey && ActionRegistry[refKey]) {
+                const payload = ActionRegistry[refKey];
+                handleSmartTrigger(payload);
+            }
+        });
+
+        // 💎 공통 핸들러: 데이터 분석 및 PTT 분기 처리
+        function handleSmartTrigger(data) {
+            if (data.mode === "SCAN") {
+                engine.log(`🍎 BSF: [${data.name}] 분석 시작 (코드:${data.id})`);
+                engine.update({ status: 'PROCESSING', data: [data] });
+                
+                setTimeout(() => {
+                    engine.log("💛 SSF: 분석 완료 및 결과 업로드");
+                    engine.update({ status: 'COMPLETED', peer: `Node-${data.id}-Active` });
+                }, 1200);
+
+            } else if (data.mode === "VOICE") {
+                engine.log(`🍎 BSF: ${data.name} 채널 오픈`);
+                engine.update({ status: 'VOICE_ACTIVE', activeId: data.id, peer: null });
+                
+                setTimeout(() => {
+                    engine.update({ status: 'IDLE' });
+                    engine.log("🍎 BSF: PTT 세션 종료");
+                }, 3000);
+            }
+        }
+    </script>
 </body>
 </html>
