@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed-Wiki [🍎CORE-V2.5]</title>
+    
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="Dev_Frame">
+        <aside class="BSF_Left_Zone">
+            <div class="card status-card">
+                <h3 class="brand-title">🍎 BSF CORE</h3>
+                <div id="Status_Badge" class="badge offline">OFFLINE</div>
+                <div id="My_ID_Display" class="id-text">CONNECTING...</div>
+            </div>
+            <div class="log-box" id="Console_Log">
+                </div>
+        </aside>
+
+        <main class="SSF_Right_Zone">
+            <div class="card sheet-card">
+                <h3>💛 SSF Dynamic Sheet (A-Sheet)</h3>
+                <div id="SSF_Dynamic_Sheet" class="button-grid">
+                    <button id="SIG_INIT" class="sheet-btn">⚙️ INIT</button>
+                    <button id="SIG_VOICE" class="sheet-btn">🍇 VOICE</button>
+                    <button id="SIG_DATA" class="sheet-btn">💾 DATA</button>
+                    <button id="SIG_ALERT" class="sheet-btn">🚨 ALERT</button>
+                </div>
+            </div>
+
+            <div class="card pool-card">
+                <h3>📡 Connection Pool</h3>
+                <div id="Conn_Pool_List" class="pool-list">
+                    <p class="empty-msg">연결된 대상 없음</p>
+                </div>
+            </div>
+
+            <footer class="shell-bar">
+                <input type="text" id="Target_ID" class="peer-input" placeholder="TARGET ID">
+                <input type="text" id="Msg_Input" class="peer-input msg-input" placeholder="메시지를 입력하세요...">
+                <button id="Send_Btn" class="send-btn">✉️ SEND</button>
+            </footer>
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

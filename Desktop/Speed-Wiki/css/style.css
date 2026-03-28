@@ -1,0 +1,54 @@
+/* css/style.css */
+:root {
+    --bg: #e0e5ec;
+    --dark: #2d3436;
+    --blue: #74b9ff;
+    --green: #00b894;
+    --purple: #a29bfe;
+    --red: #ff7675;
+    --shadow-light: #ffffff;
+    --shadow-dark: #a3b1c6;
+}
+
+body {
+    background-color: var(--bg);
+    font-family: 'Segoe UI', sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; margin: 0;
+}
+
+.Dev_Frame {
+    width: 90%; max-width: 1000px; height: 80vh;
+    background: var(--bg);
+    border-radius: 50px;
+    box-shadow: 20px 20px 60px var(--shadow-dark), -20px -20px 60px var(--shadow-light);
+    display: flex; padding: 30px; gap: 20px;
+}
+
+.card {
+    background: var(--bg);
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 9px 9px 16px var(--shadow-dark), -9px -9px 16px var(--shadow-light);
+    margin-bottom: 20px;
+}
+
+.badge {
+    display: inline-block; padding: 5px 15px; border-radius: 20px;
+    font-weight: bold; color: white; margin-top: 10px;
+}
+.offline { background: var(--red); }
+.online { background: var(--green); }
+
+.button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+button {
+    border: none; padding: 15px; border-radius: 15px;
+    background: var(--bg); font-weight: bold;
+    box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    cursor: pointer; transition: 0.2s;
+}
+
+button:active {
+    box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+}
